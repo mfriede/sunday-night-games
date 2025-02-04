@@ -42,12 +42,12 @@ export default function Home() {
               <p className="text-gray-300"> A fast-paced, arcade-style roguelike where players control a brave donut fighting off relentless waves of enemies. Survive as long as possible by collecting dessert-themed upgrades and abilities, turning yourself into an unstoppable sugary force!</p>
             </div>
             <div className="bg-gray-700 p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-4">Untitled Sandbox Game</h3>
+              <h3 className="text-xl font-bold mb-4">Sandbox Game</h3>
               <p className="text-gray-300">This game plunges players into a planet where society has fractured after the collapse of a vital wormhole connecting it to Earth. With technology reduced to relics of the past, survivors cling to life in harsh environments dominated by decaying ancient cities and hostile factions. Players must scavenge, build, and navigate the remnants of a once-thriving colony while contending with alien creatures and rival groups.</p>
             </div>
             <div className="bg-gray-700 p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-4">Game 3</h3>
-              <p className="text-gray-300"> Game 3 description</p>
+              <h3 className="text-xl font-bold mb-4">Coming Soon!</h3>
+              <p className="text-gray-300"> Details on our next game will coming soon!</p>
             </div>
           </div>
         </div>
@@ -77,10 +77,10 @@ export default function Home() {
       <section id="gallery" className="bg-gray-800 py-16 px-6">
         <h2 className="text-3xl font-bold text-center mb-8">Game Gallery</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-7xl mx-auto">
-          {/* Replace image placeholders with actual game screenshots */}
+          {/* images */}
           <img src="/images/donut_surivor_1.jpg" alt="Game Screenshot 1" className="w-full h-84 object-cover rounded-lg" />
-          <img src="/screenshot-2.jpg" alt="Game Screenshot 2" className="w-full h-84 object-cover rounded-lg" />
-          <img src="/screenshot-3.jpg" alt="Game Screenshot 3" className="w-full h-84 object-cover rounded-lg" />
+          <img src="/images/game2_image.jpg" alt="Game Screenshot 2" className="w-full h-84 object-cover rounded-lg" />
+          <img src="/images/coming_soon.jpg" alt="Game Screenshot 3" className="w-full h-84 object-cover rounded-lg" />
         </div>
       </section>
 
