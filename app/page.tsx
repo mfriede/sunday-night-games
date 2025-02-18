@@ -9,6 +9,25 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
+      {/* Hero Section */}
+      <section className="container mx-auto px-6 py-16 text-center">
+        <h1 className="text-5xl font-bold mb-8">Sunday Night Games</h1>
+        <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+          At Sunday Night Games, we believe great games are born from passion, creativity, and a spark of imagination shared among friends. Founded by three lifelong gamers and dreamers, our mission is simple: to craft fun, immersive, and memorable experiences for players everywhere.
+        </p>
+        <div className="space-x-4">
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+            Find us on Steam!
+          </button>
+          <a 
+            href="/donut-survivor" 
+            className="inline-block bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+          >
+            Play Donut Survivor
+          </a>
+        </div>
+      </section>
+
       {/* Navigation Bar */}
       <nav className="bg-gray-800 py-4 px-6">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
@@ -21,17 +40,6 @@ export default function Home() {
           </div>
         </div>
       </nav>
-
-      {/* Hero Section */}
-      <section className="container mx-auto px-6 py-16 text-center">
-        <h1 className="text-5xl font-bold mb-8">Sunday Night Games</h1>
-        <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-          At Sunday Night Games, we believe great games are born from passion, creativity, and a spark of imagination shared among friends. Founded by three lifelong gamers and dreamers, our mission is simple: to craft fun, immersive, and memorable experiences for players everywhere.
-        </p>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
-          Find us on Steam!
-        </button>
-      </section>
 
       {/* Features Section */}
       <section id="features" className="bg-gray-800 py-16 px-6">

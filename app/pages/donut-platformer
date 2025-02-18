@@ -1,0 +1,196 @@
+import { useEffect, useRef, useState } from 'react';
+
+export default function DonutSurvivor() {
+  const canvasRef = useRef(null);
+  const gameLoopRef = useRef(null);
+
+  // Use refs for game data so re-renders don't re-initialize them
+  const donutRef = useRef({
+    x: 50,
+    y: 200,
+    width: 50,
+    height: 50,
+    velocityY: 0,
+    velocityX: 0,
+    isJumping: false,
+  });
+  const platformsRef = useRef([
+    { x: 0,   y: 250, width: 400, height: 20 },
+    { x: 150, y: 180, width: 100, height: 20 },
+    { x: 300, y: 120, width: 100, height: 20 },
+    { x: 500, y: 200, width: 150, height: 20 },
+    { x: 700, y: 150, width: 100, height: 20 },
+  ]);
+  const collectiblesRef = useRef([
+    { x: 200, y: 150, size: 10 },
+    { x: 350, y: 90,  size: 10 },
+    { x: 600, y: 130, size: 10 },
+  ]);
+
+  // Also store scrollOffset, score in refs
+  const scrollOffsetRef = useRef(0);
+  const scoreRef = useRef(0);
+
+  const [gameRunning, setGameRunning] = useState(false);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const gravity = 0.5;
+    const speed = 5;
+
+    // Shortcut to easily access references inside the loop
+    const donut = donutRef.current;
+    const platforms = platformsRef.current;
+    const collectibles = collectiblesRef.current;
+    let scrollOffset = scrollOffsetRef.current;
+    let score = scoreRef.current;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowUp' && !donut.isJumping) {
+        donut.velocityY = -10; // jump
+        donut.isJumping = true;
+      }
+      if (e.key === 'ArrowLeft') {
+        donut.velocityX = -speed;
+      }
+      if (e.key === 'ArrowRight') {
+        donut.velocityX = speed;
+      }
+    };
+
+    const handleKeyUp = (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        donut.velocityX = 0;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+
+    // Main game loop
+    const updateGame = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Gravity
+      donut.velocityY += gravity;
+      donut.y += donut.velocityY;
+      donut.x += donut.velocityX;
+
+      // Scroll to the right if donut moves beyond canvas center
+      if (donut.x > canvas.width / 2) {
+        scrollOffset += donut.velocityX;
+        donut.x = canvas.width / 2;
+      }
+      // Prevent scroll offset from going negative
+      if (scrollOffset < 0) scrollOffset = 0;
+
+      // Collisions: donut vs. platforms
+      platforms.forEach((platform) => {
+        const platLeft = platform.x - scrollOffset;
+        const platRight = platLeft + platform.width;
+        const donutRight = donut.x + donut.width;
+
+        if (
+          donut.y + donut.height >= platform.y &&
+          donut.y + donut.height - donut.velocityY < platform.y &&
+          donutRight > platLeft &&
+          donut.x < platRight
+        ) {
+          donut.y = platform.y - donut.height;
+          donut.velocityY = 0;
+          donut.isJumping = false;
+        }
+      });
+
+      // Prevent donut from falling off bottom
+      if (donut.y + donut.height > canvas.height) {
+        donut.y = canvas.height - donut.height;
+        donut.velocityY = 0;
+        donut.isJumping = false;
+      }
+
+      // Collectibles collision
+      for (let i = collectibles.length - 1; i >= 0; i--) {
+        const c = collectibles[i];
+        const cLeft = c.x - scrollOffset;
+        const cRight = cLeft + c.size;
+
+        if (
+          donut.x < cRight &&
+          donut.x + donut.width > cLeft &&
+          donut.y < c.y + c.size &&
+          donut.y + donut.height > c.y
+        ) {
+          score += 10;
+          collectibles.splice(i, 1);
+        }
+      }
+
+      // Draw platforms
+      ctx.fillStyle = '#8B4513';
+      platforms.forEach((platform) => {
+        ctx.fillRect(platform.x - scrollOffset, platform.y, platform.width, platform.height);
+      });
+
+      // Draw donut
+      ctx.fillStyle = '#FF69B4';
+      ctx.beginPath();
+      ctx.arc(donut.x, donut.y + 25, 25, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draw collectibles
+      ctx.fillStyle = 'yellow';
+      collectibles.forEach((c) => {
+        ctx.fillRect(c.x - scrollOffset, c.y, c.size, c.size);
+      });
+
+      // Draw score
+      ctx.fillStyle = 'white';
+      ctx.font = '20px Arial';
+      ctx.fillText(`Score: ${score}`, 10, 20);
+
+      // Update refs for next frame
+      scrollOffsetRef.current = scrollOffset;
+      scoreRef.current = score;
+
+      // Continue loop
+      gameLoopRef.current = requestAnimationFrame(updateGame);
+    };
+
+    if (gameRunning) {
+      // Start the game loop
+      gameLoopRef.current = requestAnimationFrame(updateGame);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keyup', handleKeyUp);
+      if (gameLoopRef.current) {
+        cancelAnimationFrame(gameLoopRef.current);
+      }
+    };
+  }, [gameRunning]);
+
+  return (
+    <div style={{ textAlign: 'center' }}>
+      <canvas
+        ref={canvasRef}
+        width={600}
+        height={400}
+        style={{ border: '1px solid #ccc', background: '#333' }}
+      />
+      <br />
+      <button
+        onClick={() => setGameRunning(true)}
+        style={{ marginTop: '10px', padding: '8px 16px', background: '#FF69B4', color: '#fff',
+                 border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+      >
+        Start Game
+      </button>
+    </div>
+  );
+}
