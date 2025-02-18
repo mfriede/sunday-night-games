@@ -22,9 +22,9 @@ export default function DonutSurvivorPage() {
       </nav>
       
       <div className="container mx-auto px-6">
-        <h1 className="text-3xl font-bold text-center py-8">Donut Survivor</h1>
+        <h1 className="text-3xl font-bold text-center py-8">Donuts!</h1>
         <p className="text-center mb-8 text-gray-300">
-          Use arrow keys to move and jump. Collect yellow squares to score points!
+          Use arrow keys or WASD to move and jump. Collect sugar cubes to score points!
         </p>
         <DonutSurvivor />
       </div>
