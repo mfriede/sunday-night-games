@@ -48,41 +48,38 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="container mx-auto px-6 py-16">
-      <h2 className="text-3xl font-bold text-center mb-8">Contact Us</h2>
-      <form className="max-w-xl mx-auto" onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <input
-            type="email"
-            placeholder="Enter your email"
-            className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:border-blue-500 border"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={isSubmitting}
-          />
-        </div>
-        <div className="mb-4">
-          <textarea
-            placeholder="Your message"
-            rows={4}
-            className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:border-blue-500 border"
-            required
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            disabled={isSubmitting}
-          ></textarea>
-        </div>
-        <button
-          type="submit"
-          className={`bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors w-full ${
-            isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
+    <form className="max-w-xl mx-auto" onSubmit={handleSubmit}>
+      <div className="mb-4">
+        <input
+          type="email"
+          placeholder="Enter your email"
+          className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-600"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Sending...' : 'Send Message'}
-        </button>
-      </form>
+        />
+      </div>
+      <div className="mb-4">
+        <textarea
+          placeholder="Your message"
+          rows={4}
+          className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-600"
+          required
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          disabled={isSubmitting}
+        ></textarea>
+      </div>
+      <button
+        type="submit"
+        className={`bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors w-full ${
+          isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+        }`}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? 'Sending...' : 'Send Message'}
+      </button>
       {status.message && (
         <p className={`text-center mt-4 ${
           status.type === 'success' ? 'text-green-400' : 'text-red-400'
@@ -90,6 +87,6 @@ export default function ContactSection() {
           {status.message}
         </p>
       )}
-    </section>
+    </form>
   );
 } 

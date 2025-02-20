@@ -1,28 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import ContactSection from "./components/ContactSection";
+import Navbar from "./components/Navbar";
+import MailingListSignup from "./components/MailingListSignup";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <nav className="bg-gray-800 py-4 px-6">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <Link href="/" className="text-2xl font-bold hover:text-blue-500">
-            Sunday Night Games
-          </Link>
-          <div className="space-x-6">
-            <a href="#features" className="hover:text-blue-500 transition-colors">Games</a>
-            <a href="#contact" className="hover:text-blue-500 transition-colors">Contact</a>
-            <Link 
-              href="/donut-survivor"
-              className="text-white hover:text-blue-300 transition-colors"
-            >
-              Play Now
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="container mx-auto px-6 py-12">
         <div className="max-w-3xl mx-auto text-center">
@@ -66,8 +51,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <ContactSection />
+      {/* Mailing List Signup */}
+      <MailingListSignup />
 
       {/* Footer */}
       <footer className="bg-gray-800 py-8 px-6 mt-16">
