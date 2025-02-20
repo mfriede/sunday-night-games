@@ -27,6 +27,21 @@ export default function FlappyDonutPage() {
           Guide your donut through the obstacles by tapping space or clicking to flap!
         </p>
         <FlappyDonut />
+        
+        {/* Music Attribution */}
+        <div className="text-center text-sm text-gray-400 mt-8 pb-4">
+          <p>
+            Music provided by{' '}
+            <a 
+              href="https://www.fesliyanstudios.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 underline"
+            >
+              FesliyanStudios.com
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
