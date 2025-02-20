@@ -66,7 +66,7 @@ export default function MailingListSignup() {
             Subscribe
           </button>
           <p className="text-sm text-gray-400 mt-4">
-            We respect your privacy. We won't spam you or sell your email address.
+            We respect your privacy. We won&apos;t spam you or sell your email address.
           </p>
         </form>
         {status.message && (

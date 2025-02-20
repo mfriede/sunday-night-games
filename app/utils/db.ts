@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, MongoClientOptions } from 'mongodb';
 import fs from 'fs';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -6,8 +6,12 @@ dotenv.config();
 const env = process.env.NODE_ENV || 'development';
 const uri = env === 'production' ? process.env.MONGODB_URI_PROD : process.env.MONGODB_URI_DEV;
 
+if (!uri) {
+  throw new Error(`MongoDB URI not found for ${env} environment`);
+}
+
 // Configure MongoDB client based on environment
-let clientOptions: any = {
+const clientOptions: MongoClientOptions = {
   tls: true,
   authMechanism: 'MONGODB-X509',
 };
