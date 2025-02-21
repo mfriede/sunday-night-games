@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { sanitizeEmail, isValidEmail } from '../utils/validation';
 
 export default function MailingListSignup() {
   const [email, setEmail] = useState('');
@@ -11,11 +12,23 @@ export default function MailingListSignup() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Sanitize and validate email
+    const sanitizedEmail = sanitizeEmail(email);
+    
+    if (!isValidEmail(sanitizedEmail)) {
+      setStatus({
+        type: 'error',
+        message: 'Please enter a valid email address.'
+      });
+      return;
+    }
+
     try {
       const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: sanitizedEmail }),
       });
 
       const data = await response.json();
@@ -23,7 +36,7 @@ export default function MailingListSignup() {
       if (response.ok) {
         setStatus({
           type: 'success',
-          message: data.message || 'Thanks for subscribing! We\'ll keep you updated.'
+          message: data.message || 'Thanks for subscribing! We&apos;ll keep you updated.'
         });
         setEmail('');
       } else {

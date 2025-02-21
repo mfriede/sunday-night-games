@@ -1,15 +1,26 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '../../utils/db';
+import { sanitizeEmail, isValidEmail } from '../../utils/validation';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email } = body;
+    let { email } = body;
 
-    // Validate email
+    // Validate email presence
     if (!email) {
       return NextResponse.json(
         { error: 'Email is required' },
+        { status: 400 }
+      );
+    }
+
+    // Sanitize and validate email
+    email = sanitizeEmail(email);
+    
+    if (!isValidEmail(email)) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
         { status: 400 }
       );
     }
@@ -22,12 +33,12 @@ export async function POST(request: Request) {
 
     if (existingContact) {
       return NextResponse.json(
-        { message: 'You\'re already subscribed!' },
+        { message: 'You&apos;re already subscribed!' },
         { status: 200 }
       );
     }
 
-    // Add new contact
+    // Add new contact with sanitized email
     const dateAdded = new Date();
     await collection.insertOne({ 
       email, 
