@@ -57,6 +57,7 @@ export default function FlappyDonut() {
         x: number;
         topHeight: number;
         passed: boolean;
+        gap?: number; // Track individual pipe gap
       }[],
       frame: 0,
       pipeGap: 160,
@@ -308,18 +309,25 @@ export default function FlappyDonut() {
         }
       }
 
-      // Pipe spawning with occasional power-ups
+      // Pipe spawning with occasional power-ups and dynamic gaps
       game.spawnTimer--;
       if (game.spawnTimer <= 0) {
+        // Calculate dynamic gap based on score
+        // At score 0: gap between 160-190
+        // At score 30+: gap approaches 140-150
+        const maxGap = Math.max(190 - Math.floor(game.score / 3) * 5, 150);
+        const minGap = Math.max(140 - Math.floor(game.score / 5) * 2, 130);
+        const currentGap = Math.floor(Math.random() * (maxGap - minGap + 1)) + minGap;
+
         const minHeight = 80;
-        const maxHeight = canvas.height - game.pipeGap - 80;
+        const maxHeight = canvas.height - currentGap - 80;
         const topHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
 
-        game.pipes.push({ x: canvas.width, topHeight, passed: false });
+        game.pipes.push({ x: canvas.width, topHeight, passed: false, gap: currentGap });
 
         // Spawn power-up occasionally
         if (Math.random() < 0.1) {
-          const powerUpY = topHeight + game.pipeGap / 2 - 15;
+          const powerUpY = topHeight + currentGap / 2 - 15;
           game.powerUps.push({
             x: canvas.width + 100,
             y: powerUpY,
@@ -357,20 +365,23 @@ export default function FlappyDonut() {
         ctx.fillStyle = "#27ae60";
         ctx.fillRect(pipe.x - 5, pipe.topHeight - 30, game.pipeWidth + 10, 30);
 
+        // Use individual pipe gap or default
+        const pipeGap = pipe.gap || game.pipeGap;
+
         // Bottom pipe
         ctx.fillStyle = gradient;
         ctx.fillRect(
           pipe.x,
-          pipe.topHeight + game.pipeGap,
+          pipe.topHeight + pipeGap,
           game.pipeWidth,
-          canvas.height - pipe.topHeight - game.pipeGap
+          canvas.height - pipe.topHeight - pipeGap
         );
 
         // Bottom pipe cap
         ctx.fillStyle = "#27ae60";
         ctx.fillRect(
           pipe.x - 5,
-          pipe.topHeight + game.pipeGap,
+          pipe.topHeight + pipeGap,
           game.pipeWidth + 10,
           30
         );
@@ -388,7 +399,7 @@ export default function FlappyDonut() {
 
         if (birdBox.right > pipeLeft && birdBox.left < pipeRight) {
           const gapTop = pipe.topHeight;
-          const gapBottom = pipe.topHeight + game.pipeGap;
+          const gapBottom = pipe.topHeight + pipeGap;
 
           if (!game.shield && (birdBox.top < gapTop || birdBox.bottom > gapBottom)) {
             handleGameOver();

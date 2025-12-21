@@ -30,6 +30,7 @@ The application requires environment variables for database connectivity:
 - **Client-Side Games**: Canvas-based games implemented as React components with extensive use of `useRef`, `useEffect`, and `requestAnimationFrame`
 - **Database**: MongoDB with X.509 certificate authentication for mailing list subscriptions
 - **API Routes**: RESTful endpoints in `app/api/` for contact form and mailing list functionality
+- **Always test before returning your work is complete**: Run NPM Lint, NPM Build and fix errors before telling the user the work is finished. Warnings are acceptable  
 
 ### Game Architecture
 Games follow a consistent pattern:
