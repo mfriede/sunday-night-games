@@ -8,12 +8,38 @@ export async function POST(request: Request) {
   try {
     // Initialize SendGrid only when the API is called
     const apiKey = process.env.SENDGRID_API_KEY;
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const senderEmail = process.env.VERIFIED_SENDER_EMAIL;
+
+    // Debug: Check if environment variables are loaded (remove in production)
+    console.log('Environment check:', {
+      hasApiKey: !!apiKey,
+      hasAdminEmail: !!adminEmail,
+      hasSenderEmail: !!senderEmail,
+      nodeEnv: process.env.NODE_ENV
+    });
+
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'SendGrid API key not configured' },
+        { error: 'SendGrid API key not configured in environment variables' },
         { status: 500 }
       );
     }
+
+    if (!adminEmail) {
+      return NextResponse.json(
+        { error: 'Admin email not configured in environment variables' },
+        { status: 500 }
+      );
+    }
+
+    if (!senderEmail) {
+      return NextResponse.json(
+        { error: 'Verified sender email not configured in environment variables' },
+        { status: 500 }
+      );
+    }
+
     sgMail.setApiKey(apiKey);
 
     const { email, message } = await request.json();
@@ -28,8 +54,8 @@ export async function POST(request: Request) {
 
     // Prepare email data
     const msg = {
-      to: process.env.ADMIN_EMAIL!, // Your email address
-      from: process.env.VERIFIED_SENDER_EMAIL!, // Your verified SendGrid sender
+      to: adminEmail, // Your email address
+      from: senderEmail, // Your verified SendGrid sender
       subject: 'New Contact Form Submission - Sunday Night Games',
       text: `New message from: ${email}\n\nMessage: ${message}`,
       html: `
@@ -46,8 +72,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error sending email:', error);
+
+    // Provide more specific error information
+    let errorMessage = 'Failed to send message';
+    if (error instanceof Error) {
+      if (error.message.includes('401')) {
+        errorMessage = 'SendGrid API authentication failed. Check API key.';
+      } else if (error.message.includes('403')) {
+        errorMessage = 'SendGrid permission denied. Check sender email verification.';
+      } else if (error.message.includes('550')) {
+        errorMessage = 'Invalid recipient email address.';
+      }
+    }
+
     return NextResponse.json(
-      { error: 'Failed to send message' },
+      { error: errorMessage, details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
