@@ -91,6 +91,7 @@ export default function DonutSurvivor() {
   const keysPressed = useRef<Set<string>>(new Set());
   const keysPressedLastFrame = useRef<Set<string>>(new Set());
   const donutSpriteRef = useRef<HTMLImageElement | null>(null);
+  const backgroundMusicRef = useRef<HTMLAudioElement | null>(null);
 
   // Load sprites
   useEffect(() => {
@@ -113,6 +114,11 @@ export default function DonutSurvivor() {
 
     // Note: Coin sprite loading removed since coin_sprite.png doesn't exist
     // Coins are drawn as circles in the render loop
+
+    // Load background music
+    backgroundMusicRef.current = new Audio('/8_Bit_Adventure.mp3');
+    backgroundMusicRef.current.loop = true;
+    backgroundMusicRef.current.volume = 0.3; // Set volume to 30%
   }, []);
 
   const createParticles = (x: number, y: number, color: string, count: number = 10) => {
@@ -247,19 +253,42 @@ export default function DonutSurvivor() {
   const startGame = useCallback(() => {
     initializeGame();
     setGameState('playing');
+
+    // Start background music
+    if (backgroundMusicRef.current) {
+      backgroundMusicRef.current.play().catch(err => {
+        console.log('Autoplay blocked until user interaction:', err);
+      });
+    }
   }, [initializeGame]);
 
   const togglePause = useCallback(() => {
     if (gameState === 'playing') {
       setGameState('paused');
+      // Pause music
+      if (backgroundMusicRef.current) {
+        backgroundMusicRef.current.pause();
+      }
     } else if (gameState === 'paused') {
       setGameState('playing');
+      // Resume music
+      if (backgroundMusicRef.current) {
+        backgroundMusicRef.current.play().catch(err => {
+          console.log('Failed to resume music:', err);
+        });
+      }
     }
   }, [gameState]);
 
   const gameOver = useCallback(() => {
     setGameState('gameover');
     createParticles(gameStateRef.current.donut.x, gameStateRef.current.donut.y, '#ff0000', 30);
+
+    // Stop music on game over
+    if (backgroundMusicRef.current) {
+      backgroundMusicRef.current.pause();
+      backgroundMusicRef.current.currentTime = 0; // Reset to beginning
+    }
   }, []);
 
   useEffect(() => {
@@ -327,6 +356,10 @@ export default function DonutSurvivor() {
         ctx.font = '16px Arial';
         ctx.fillText('Controls: Arrow Keys/WASD to Move', canvas.width / 2, 350);
         ctx.fillText('Collect coins and power-ups!', canvas.width / 2, 380);
+
+        ctx.fillStyle = '#888';
+        ctx.font = '12px Arial';
+        ctx.fillText('Music: "8-Bit Adventure" by Alexandr Zhelanov', canvas.width / 2, 410);
 
         if (keysPressed.current.has(' ')) {
           startGame();
