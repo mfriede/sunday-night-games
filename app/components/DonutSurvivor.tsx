@@ -94,22 +94,21 @@ export default function DonutSurvivor() {
 
   // Load sprites
   useEffect(() => {
+    console.log('Loading donut sprite...');
     const donutSprite = new Image();
-    donutSprite.src = '/images/donut_sprite_trimmed.png';
+    donutSprite.src = '/donut.png';
+
     donutSprite.onload = () => {
+      console.log('Donut sprite loaded successfully!', {
+        width: donutSprite.width,
+        height: donutSprite.height,
+        complete: donutSprite.complete
+      });
       donutSpriteRef.current = donutSprite;
     };
-    donutSprite.onerror = () => {
-      console.error('Failed to load donut sprite from /images/donut_sprite_trimmed.png');
-      // Try fallback
-      const fallbackSprite = new Image();
-      fallbackSprite.src = '/donut.png';
-      fallbackSprite.onload = () => {
-        donutSpriteRef.current = fallbackSprite;
-      };
-      fallbackSprite.onerror = () => {
-        console.error('Failed to load fallback donut sprite');
-      };
+
+    donutSprite.onerror = (e) => {
+      console.error('Failed to load donut sprite:', e);
     };
 
     const collectibleSprite = new Image();
@@ -277,6 +276,17 @@ export default function DonutSurvivor() {
 
     canvas.width = 800;
     canvas.height = 400;
+
+    // Load donut image directly
+    const donutImg = new Image();
+    donutImg.src = '/donut.png';
+    donutImg.onload = () => {
+      console.log('Donut image loaded for canvas rendering');
+      donutSpriteRef.current = donutImg;
+    };
+    donutImg.onerror = () => {
+      console.error('Failed to load donut image');
+    };
 
     // Handle keyboard input
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -658,25 +668,11 @@ export default function DonutSurvivor() {
 
         // Draw donut sprite or fallback
         if (donutSpriteRef.current && donutSpriteRef.current.complete) {
-          const spriteWidth = 64;
-          const spriteHeight = 64;
-          const frameX = Math.floor(donut.frame) * spriteWidth;
-
-          // Check if sprite sheet has multiple frames
-          if (donutSpriteRef.current.width >= spriteWidth * 2) {
-            // Use sprite sheet with animation
-            ctx.drawImage(
-              donutSpriteRef.current,
-              frameX, 0, spriteWidth, spriteHeight,
-              -donut.width / 2, -donut.height / 2, donut.width, donut.height
-            );
-          } else {
-            // Use single frame sprite
-            ctx.drawImage(
-              donutSpriteRef.current,
-              -donut.width / 2, -donut.height / 2, donut.width, donut.height
-            );
-          }
+          // Draw the donut image
+          ctx.drawImage(
+            donutSpriteRef.current,
+            -donut.width / 2, -donut.height / 2, donut.width, donut.height
+          );
         } else {
           // Fallback donut
           ctx.fillStyle = '#FFD700';
