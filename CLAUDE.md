@@ -84,3 +84,6 @@ When modifying game components:
 - Path aliases configured: `@/*` maps to `./`
 - Strict mode enabled for type safety
 - Next.js plugin integration for optimal bundling
+
+
+## Always run NPM LINT, NPM Build before submitting code as ready ##

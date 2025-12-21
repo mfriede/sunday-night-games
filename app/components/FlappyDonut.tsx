@@ -122,6 +122,14 @@ export default function FlappyDonut() {
     }
   }, [gameStarted, isGameOver]);
 
+  const handleRestart = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => {});
+    }
+    startGame();
+  }, [startGame]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -591,14 +599,6 @@ export default function FlappyDonut() {
       }
     };
   }, [gameStarted, isGameOver, isPaused, handleGameOver, startGame, togglePause, finalScore, highScore, handleRestart]);
-
-  const handleRestart = useCallback(() => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(() => {});
-    }
-    startGame();
-  }, [startGame]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 p-4">
