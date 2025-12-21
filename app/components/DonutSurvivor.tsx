@@ -89,6 +89,7 @@ export default function DonutSurvivor() {
 
   const animationFrameRef = useRef<number>(0);
   const keysPressed = useRef<Set<string>>(new Set());
+  const keysPressedLastFrame = useRef<Set<string>>(new Set());
   const donutSpriteRef = useRef<HTMLImageElement | null>(null);
 
   // Load sprites
@@ -388,16 +389,20 @@ export default function DonutSurvivor() {
           donut.velocityX = speed;
         }
         // Handle jumping and double jumping
-        const jumpPressed = keysPressed.current.has('arrowup') || keysPressed.current.has(' ') || keysPressed.current.has('w');
+        // Check if jump key was just pressed (not held down)
+        const jumpKeys = ['arrowup', ' ', 'w'];
+        const jumpJustPressed = jumpKeys.some(key =>
+          keysPressed.current.has(key) && !keysPressedLastFrame.current.has(key)
+        );
 
-        if (jumpPressed && !donut.isJumping) {
+        if (jumpJustPressed && !donut.isJumping) {
           // First jump from ground
           donut.velocityY = -12;
           donut.isJumping = true;
           donut.doubleJumpAvailable = true; // Allow double jump for this jump cycle
           createJumpSound();
           createParticles(donut.x + donut.width / 2, donut.y + donut.height, '#FFFFFF', 5);
-        } else if (jumpPressed && donut.isJumping && donut.doubleJumpAvailable) {
+        } else if (jumpJustPressed && donut.isJumping && donut.doubleJumpAvailable) {
           // Double jump - can be used once per jump cycle
           donut.velocityY = -10;
           donut.doubleJumpAvailable = false; // Use up the double jump
@@ -729,6 +734,9 @@ export default function DonutSurvivor() {
           ctx.fillText(`Magnet: ${Math.ceil(game.magnetTimer / 60)}s`, 10, 130);
         }
       }
+
+      // Update last frame's keys for next frame comparison
+      keysPressedLastFrame.current = new Set(keysPressed.current);
 
       animationFrameRef.current = requestAnimationFrame(gameLoop);
     };
