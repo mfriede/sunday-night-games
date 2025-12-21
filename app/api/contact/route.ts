@@ -1,11 +1,21 @@
 import { NextResponse } from 'next/server';
 import sgMail from '@sendgrid/mail';
 
-// Initialize SendGrid with API key
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
+    // Initialize SendGrid only when the API is called
+    const apiKey = process.env.SENDGRID_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'SendGrid API key not configured' },
+        { status: 500 }
+      );
+    }
+    sgMail.setApiKey(apiKey);
+
     const { email, message } = await request.json();
 
     // Validate inputs

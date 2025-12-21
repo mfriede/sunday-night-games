@@ -9,6 +9,8 @@ const DonutGame = () => {
   const [gameRunning, setGameRunning] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
+  const gameOverRef = useRef(false);
+  const finalScoreRef = useRef(0);
   const donutImageRef = useRef<HTMLImageElement | null>(null);
   const gameOverImageRef = useRef<HTMLImageElement | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -18,6 +20,8 @@ const DonutGame = () => {
     setGameOver(false);
     setGameRunning(true);
     setFinalScore(0);
+    gameOverRef.current = false;
+    finalScoreRef.current = 0;
   };
 
   useEffect(() => {
@@ -37,6 +41,15 @@ const DonutGame = () => {
       setGameOverImageLoaded(true);
     };
   }, []);
+
+  // Sync refs with state
+  useEffect(() => {
+    gameOverRef.current = gameOver;
+  }, [gameOver]);
+
+  useEffect(() => {
+    finalScoreRef.current = finalScore;
+  }, [finalScore]);
 
   useEffect(() => {
     if (!imageLoaded || !donutImageRef.current) return;
@@ -221,24 +234,24 @@ const DonutGame = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // If game is over, draw the game over image
-      if (gameOver && gameOverImageRef.current) {
+      if (gameOverRef.current && gameOverImageRef.current) {
         // Draw the game over image to fit canvas while maintaining aspect ratio
         const img = gameOverImageRef.current;
         const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
         const x = (canvas.width - img.width * scale) / 2;
         const y = (canvas.height - img.height * scale) / 2;
-        
+
         ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-        
+
         // Draw score overlay
         ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
         ctx.fillRect(0, canvas.height / 2 - 50, canvas.width, 100);
-        
+
         ctx.fillStyle = "white";
         ctx.font = "30px Arial";
         ctx.textAlign = "center";
-        ctx.fillText(`Final Score: ${finalScore}`, canvas.width / 2, canvas.height / 2);
-        
+        ctx.fillText(`Final Score: ${finalScoreRef.current}`, canvas.width / 2, canvas.height / 2);
+
         return;
       }
 
@@ -253,6 +266,8 @@ const DonutGame = () => {
 
       // Check if donut fell off the bottom
       if (donut.y + donut.height > canvas.height) {
+        gameOverRef.current = true;
+        finalScoreRef.current = score;
         setGameOver(true);
         setFinalScore(score);
         setGameRunning(false);
