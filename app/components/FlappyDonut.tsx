@@ -20,8 +20,6 @@ interface PowerUp {
 export default function FlappyDonut() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const jumpSoundRef = useRef<HTMLAudioElement | null>(null);
-  const scoreSoundRef = useRef<HTMLAudioElement | null>(null);
 
   const [isGameOver, setIsGameOver] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
@@ -61,7 +59,7 @@ export default function FlappyDonut() {
         passed: boolean;
       }[],
       frame: 0,
-      pipeGap: 140,
+      pipeGap: 160,
       score: 0,
       particles: [] as Particle[],
       powerUps: [] as PowerUp[],
@@ -139,18 +137,43 @@ export default function FlappyDonut() {
     const pipeImg = new Image();
     pipeImg.src = "/pipe.png";
 
-    // Sound effects
-    if (!jumpSoundRef.current) {
-      jumpSoundRef.current = new Audio();
-      jumpSoundRef.current.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
-      jumpSoundRef.current.volume = 0.3;
-    }
+    // Create oscillator-based jump sound
+    const createJumpSound = () => {
+      const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
 
-    if (!scoreSoundRef.current) {
-      scoreSoundRef.current = new Audio();
-      scoreSoundRef.current.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
-      scoreSoundRef.current.volume = 0.5;
-    }
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.1);
+
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+    };
+
+    // Create oscillator-based score sound
+    const createScoreSound = () => {
+      const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.15);
+
+      gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.15);
+    };
 
     canvas.width = 400;
     canvas.height = 600;
@@ -172,7 +195,7 @@ export default function FlappyDonut() {
         ctx.fillText("Flappy Donut", canvas.width / 2, 200);
 
         ctx.font = "20px Arial";
-        ctx.fillText("Click or Press Space to Start", canvas.width / 2, 250);
+        ctx.fillText("Press Space to Start", canvas.width / 2, 250);
         ctx.fillText("Press P to Pause", canvas.width / 2, 280);
 
         ctx.font = "16px Arial";
@@ -243,6 +266,9 @@ export default function FlappyDonut() {
         ctx.fillStyle = "white";
         ctx.font = "18px Arial";
         ctx.fillText(`High Score: ${highScore}`, canvas.width / 2, 330);
+
+        ctx.font = "16px Arial";
+        ctx.fillText("Press Space to restart", canvas.width / 2, 370);
 
         animationFrameRef.current = requestAnimationFrame(gameLoop);
         return;
@@ -368,10 +394,11 @@ export default function FlappyDonut() {
           pipe.passed = true;
           createParticles(game.bird.x + 25, game.bird.y + 25, "#FFD700", 15);
 
-          // Play score sound
-          if (scoreSoundRef.current) {
-            scoreSoundRef.current.currentTime = 0;
-            scoreSoundRef.current.play().catch(() => {});
+          // Play score sound using Web Audio API
+          try {
+            createScoreSound();
+          } catch (e) {
+            console.log("Audio not supported");
           }
         }
 
@@ -513,10 +540,11 @@ export default function FlappyDonut() {
         5
       );
 
-      // Play jump sound
-      if (jumpSoundRef.current) {
-        jumpSoundRef.current.currentTime = 0;
-        jumpSoundRef.current.play().catch(() => {});
+      // Play jump sound using Web Audio API
+      try {
+        createJumpSound();
+      } catch (e) {
+        console.log("Audio not supported");
       }
     }
 
@@ -534,34 +562,41 @@ export default function FlappyDonut() {
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    canvas.addEventListener("click", () => {
+    const handleClick = (e: MouseEvent) => {
+      // Left click only
+      if (e.button !== 0) return;
+
       if (!gameStarted) {
         startGame();
-      } else {
+      } else if (!isGameOver && !isPaused) {
         jump();
       }
-    });
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    canvas.addEventListener("click", handleClick);
+    canvas.addEventListener("contextmenu", (e) => e.preventDefault());
 
     // Start game loop
     gameLoop();
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      canvas.removeEventListener("click", jump);
+      canvas.removeEventListener("click", handleClick);
+      canvas.removeEventListener("contextmenu", (e) => e.preventDefault());
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
   }, [gameStarted, isGameOver, isPaused, handleGameOver, startGame, togglePause, finalScore, highScore]);
 
-  const handleRestart = () => {
+  const handleRestart = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch(() => {});
     }
     startGame();
-  };
+  }, [startGame]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 p-4">
@@ -584,7 +619,7 @@ export default function FlappyDonut() {
       <div className="mt-4 text-white text-center">
         <p className="text-lg font-semibold">High Score: {highScore}</p>
         <p className="text-sm text-gray-400 mt-2">
-          Use SPACE or click to jump • P to pause
+          Use SPACE to jump • P to pause
         </p>
       </div>
 
