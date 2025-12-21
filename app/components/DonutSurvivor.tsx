@@ -468,17 +468,33 @@ export default function DonutSurvivor() {
 
         // Generate new platforms
         const rightmostPlatform = game.platforms[game.platforms.length - 1];
-        if (rightmostPlatform.x < game.camera.x + canvas.width * 2) {
-          const lastPlatform = game.platforms[game.platforms.length - 2];
+        const rightmostEdge = rightmostPlatform.x + rightmostPlatform.width;
+
+        // Only generate when the rightmost platform is starting to come into view
+        // This ensures platforms scroll in smoothly instead of popping
+        if (rightmostEdge < game.camera.x + canvas.width) {
           const gap = 100 + Math.random() * 150;
+          const newX = rightmostEdge + gap;
+
           // Ensure platforms stay within canvas bounds (400px height - 20px platform height = 380px max Y)
           const y = 250 + Math.random() * 130; // 250 to 380, keeping platforms fully visible
-          game.platforms.push({
-            x: lastPlatform.x + gap,
-            y,
-            width: 120 + Math.random() * 80,
-            height: 20,
-          });
+          const width = 120 + Math.random() * 80;
+
+          // Check for potential overlaps with existing platforms
+          const wouldOverlap = game.platforms.some(platform =>
+            Math.abs(platform.x - newX) < 50 && // Check X proximity
+            Math.abs(platform.y - y) < 30   // Check Y proximity
+          );
+
+          // Only add platform if it won't overlap
+          if (!wouldOverlap) {
+            game.platforms.push({
+              x: newX,
+              y,
+              width,
+              height: 20,
+            });
+          }
         }
 
         // Remove old platforms
