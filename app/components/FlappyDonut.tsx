@@ -195,7 +195,7 @@ export default function FlappyDonut() {
         ctx.fillText("Flappy Donut", canvas.width / 2, 200);
 
         ctx.font = "20px Arial";
-        ctx.fillText("Press Space to Start", canvas.width / 2, 250);
+        ctx.fillText("Press Space or Click to Start", canvas.width / 2, 250);
         ctx.fillText("Press P to Pause", canvas.width / 2, 280);
 
         ctx.font = "16px Arial";
@@ -268,7 +268,7 @@ export default function FlappyDonut() {
         ctx.fillText(`High Score: ${highScore}`, canvas.width / 2, 330);
 
         ctx.font = "16px Arial";
-        ctx.fillText("Press Space to restart", canvas.width / 2, 370);
+        ctx.fillText("Press Space or Click to restart", canvas.width / 2, 370);
 
         animationFrameRef.current = requestAnimationFrame(gameLoop);
         return;
@@ -568,7 +568,9 @@ export default function FlappyDonut() {
 
       if (!gameStarted) {
         startGame();
-      } else if (!isGameOver && !isPaused) {
+      } else if (isGameOver) {
+        handleRestart();
+      } else if (!isPaused) {
         jump();
       }
     };
@@ -588,7 +590,7 @@ export default function FlappyDonut() {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [gameStarted, isGameOver, isPaused, handleGameOver, startGame, togglePause, finalScore, highScore]);
+  }, [gameStarted, isGameOver, isPaused, handleGameOver, startGame, togglePause, finalScore, highScore, handleRestart]);
 
   const handleRestart = useCallback(() => {
     if (audioRef.current) {
@@ -619,7 +621,7 @@ export default function FlappyDonut() {
       <div className="mt-4 text-white text-center">
         <p className="text-lg font-semibold">High Score: {highScore}</p>
         <p className="text-sm text-gray-400 mt-2">
-          Use SPACE to jump • P to pause
+          Use SPACE or Click to jump • P to pause
         </p>
       </div>
 
