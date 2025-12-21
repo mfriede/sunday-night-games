@@ -215,7 +215,8 @@ export default function DonutSurvivor() {
     let lastX = 300;
     for (let i = 0; i < 50; i++) {
       const gap = 100 + Math.random() * 150;
-      const y = 250 + Math.random() * 200;
+      // Ensure platforms stay within canvas bounds (400px height - 20px platform height = 380px max Y)
+      const y = 250 + Math.random() * 130; // 250 to 380, keeping platforms fully visible
       game.platforms.push({
         x: lastX + gap,
         y,
@@ -470,7 +471,8 @@ export default function DonutSurvivor() {
         if (rightmostPlatform.x < game.camera.x + canvas.width * 2) {
           const lastPlatform = game.platforms[game.platforms.length - 2];
           const gap = 100 + Math.random() * 150;
-          const y = 250 + Math.random() * 200;
+          // Ensure platforms stay within canvas bounds (400px height - 20px platform height = 380px max Y)
+          const y = 250 + Math.random() * 130; // 250 to 380, keeping platforms fully visible
           game.platforms.push({
             x: lastPlatform.x + gap,
             y,
