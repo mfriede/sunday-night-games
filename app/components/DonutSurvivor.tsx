@@ -386,15 +386,22 @@ export default function DonutSurvivor() {
         if (keysPressed.current.has('arrowright') || keysPressed.current.has('d')) {
           donut.velocityX = speed;
         }
-        if ((keysPressed.current.has('arrowup') || keysPressed.current.has(' ') || keysPressed.current.has('w')) && !donut.isJumping) {
+        // Handle jumping and double jumping
+        const jumpPressed = keysPressed.current.has('arrowup') || keysPressed.current.has(' ') || keysPressed.current.has('w');
+
+        if (jumpPressed && !donut.isJumping) {
+          // First jump from ground
           donut.velocityY = -12;
           donut.isJumping = true;
+          donut.doubleJumpAvailable = true; // Allow double jump for this jump cycle
           createJumpSound();
-        } else if ((keysPressed.current.has('arrowup') || keysPressed.current.has(' ') || keysPressed.current.has('w')) && donut.doubleJumpAvailable) {
+          createParticles(donut.x + donut.width / 2, donut.y + donut.height, '#FFFFFF', 5);
+        } else if (jumpPressed && donut.isJumping && donut.doubleJumpAvailable) {
+          // Double jump - can be used once per jump cycle
           donut.velocityY = -10;
-          donut.doubleJumpAvailable = false;
+          donut.doubleJumpAvailable = false; // Use up the double jump
           createJumpSound();
-          createParticles(donut.x + donut.width / 2, donut.y + donut.height, '#87CEEB', 10);
+          createParticles(donut.x + donut.width / 2, donut.y + donut.height, '#87CEEB', 15);
         }
 
         // Apply physics
