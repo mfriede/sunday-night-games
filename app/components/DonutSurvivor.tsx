@@ -364,7 +364,7 @@ export default function DonutSurvivor() {
         ctx.fillStyle = 'white';
         ctx.font = '20px Arial';
         ctx.fillText(`High Score: ${highScore}`, canvas.width / 2, 320);
-        ctx.fillText('Distance: ${Math.floor(distance)}m', canvas.width / 2, 360);
+        ctx.fillText(`Distance: ${Math.floor(distance / 10)}m`, canvas.width / 2, 360);
 
         ctx.font = '18px Arial';
         ctx.fillText('Press SPACE to Play Again', canvas.width / 2, 390);
