@@ -90,7 +90,6 @@ export default function DonutSurvivor() {
   const animationFrameRef = useRef<number>(0);
   const keysPressed = useRef<Set<string>>(new Set());
   const donutSpriteRef = useRef<HTMLImageElement | null>(null);
-  const collectibleSpriteRef = useRef<HTMLImageElement | null>(null);
 
   // Load sprites
   useEffect(() => {
@@ -111,14 +110,8 @@ export default function DonutSurvivor() {
       console.error('Failed to load donut sprite:', e);
     };
 
-    const collectibleSprite = new Image();
-    collectibleSprite.src = '/images/coin_sprite.png';
-    collectibleSprite.onload = () => {
-      collectibleSpriteRef.current = collectibleSprite;
-    };
-    collectibleSprite.onerror = () => {
-      console.error('Failed to load coin sprite');
-    };
+    // Note: Coin sprite loading removed since coin_sprite.png doesn't exist
+    // Coins are drawn as circles in the render loop
   }, []);
 
   const createParticles = (x: number, y: number, color: string, count: number = 10) => {
