@@ -1,8 +1,18 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '../../utils/db';
-import { sanitizeEmail, isValidEmail } from '../../utils/validation';
+
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
+  // Skip during build
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    return NextResponse.json({ message: 'Not available during build' }, { status: 200 });
+  }
+
+  // Dynamic imports to avoid build-time issues
+  const { default: connectToDatabase } = await import('../../utils/db');
+  const { sanitizeEmail, isValidEmail } = await import('../../utils/validation');
   try {
     const body = await request.json();
     let { email } = body;
