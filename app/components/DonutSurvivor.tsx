@@ -99,11 +99,26 @@ export default function DonutSurvivor() {
     donutSprite.onload = () => {
       donutSpriteRef.current = donutSprite;
     };
+    donutSprite.onerror = () => {
+      console.error('Failed to load donut sprite from /images/donut_sprite_trimmed.png');
+      // Try fallback
+      const fallbackSprite = new Image();
+      fallbackSprite.src = '/donut.png';
+      fallbackSprite.onload = () => {
+        donutSpriteRef.current = fallbackSprite;
+      };
+      fallbackSprite.onerror = () => {
+        console.error('Failed to load fallback donut sprite');
+      };
+    };
 
     const collectibleSprite = new Image();
     collectibleSprite.src = '/images/coin_sprite.png';
     collectibleSprite.onload = () => {
       collectibleSpriteRef.current = collectibleSprite;
+    };
+    collectibleSprite.onerror = () => {
+      console.error('Failed to load coin sprite');
     };
   }, []);
 
@@ -642,15 +657,26 @@ export default function DonutSurvivor() {
         }
 
         // Draw donut sprite or fallback
-        if (donutSpriteRef.current) {
+        if (donutSpriteRef.current && donutSpriteRef.current.complete) {
           const spriteWidth = 64;
           const spriteHeight = 64;
           const frameX = Math.floor(donut.frame) * spriteWidth;
-          ctx.drawImage(
-            donutSpriteRef.current,
-            frameX, 0, spriteWidth, spriteHeight,
-            -donut.width / 2, -donut.height / 2, donut.width, donut.height
-          );
+
+          // Check if sprite sheet has multiple frames
+          if (donutSpriteRef.current.width >= spriteWidth * 2) {
+            // Use sprite sheet with animation
+            ctx.drawImage(
+              donutSpriteRef.current,
+              frameX, 0, spriteWidth, spriteHeight,
+              -donut.width / 2, -donut.height / 2, donut.width, donut.height
+            );
+          } else {
+            // Use single frame sprite
+            ctx.drawImage(
+              donutSpriteRef.current,
+              -donut.width / 2, -donut.height / 2, donut.width, donut.height
+            );
+          }
         } else {
           // Fallback donut
           ctx.fillStyle = '#FFD700';
