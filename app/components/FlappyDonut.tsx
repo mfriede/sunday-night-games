@@ -78,6 +78,7 @@ export default function FlappyDonut() {
 
   const gameStateRef = useRef(initializeGame());
   const animationFrameRef = useRef<number>(0);
+  const lastTimeRef = useRef<number>(0);
 
   const createParticles = (x: number, y: number, color: string, count: number = 10) => {
     for (let i = 0; i < count; i++) {
@@ -115,11 +116,18 @@ export default function FlappyDonut() {
     gameStateRef.current = initializeGame();
     setIsGameOver(false);
     setFinalScore(0);
+    lastTimeRef.current = 0; // Reset delta time tracking
   }, []);
 
   const togglePause = useCallback(() => {
     if (gameStarted && !isGameOver) {
-      setIsPaused((prev) => !prev);
+      setIsPaused((prev) => {
+        const newState = !prev;
+        if (newState === false) {
+          lastTimeRef.current = 0; // Reset delta time when resuming
+        }
+        return newState;
+      });
     }
   }, [gameStarted, isGameOver]);
 
@@ -129,6 +137,8 @@ export default function FlappyDonut() {
       audioRef.current.play().catch(() => {});
     }
     startGame();
+    // Reset delta time when restarting from game over
+    lastTimeRef.current = 0;
   }, [startGame]);
 
   useEffect(() => {
@@ -190,6 +200,16 @@ export default function FlappyDonut() {
     function gameLoop() {
       if (!canvas || !ctx) return;
 
+      // Calculate delta time for frame-rate independent movement
+      const currentTime = performance.now();
+      const deltaTime = lastTimeRef.current > 0
+        ? (currentTime - lastTimeRef.current) / 1000 // Convert to seconds
+        : 1 / 60;
+      lastTimeRef.current = currentTime;
+
+      // Normalize to 60 FPS (multiply by 60 so values work same as before at 60fps)
+      const dt = deltaTime * 60;
+
       const game = gameStateRef.current;
 
       // Clear canvas
@@ -239,10 +259,10 @@ export default function FlappyDonut() {
       if (isGameOver) {
         // Draw particles
         game.particles = game.particles.filter((p) => {
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vy += 0.2;
-          p.life -= 0.02;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.vy += 0.2 * dt;
+          p.life -= 0.02 * dt;
 
           if (p.life > 0) {
             ctx.save();
@@ -283,34 +303,34 @@ export default function FlappyDonut() {
         return;
       }
 
-      game.frame++;
+      game.frame += dt;
 
       // Update game speed based on score
       const speedMultiplier = game.slowMotion ? 0.5 : 1;
       game.gameSpeed = Math.min(2 + game.score * 0.1, 5) * speedMultiplier;
 
-      // Scroll background
-      const bgSpeed = 1 * speedMultiplier;
-      const bgX = -(game.frame * bgSpeed % canvas.width);
+      // Scroll background (game.frame is already dt-normalized)
+      const bgX = -(game.frame * speedMultiplier % canvas.width);
       ctx.drawImage(bgImg, bgX, 0, canvas.width, canvas.height);
       ctx.drawImage(bgImg, bgX + canvas.width, 0, canvas.width, canvas.height);
 
       // Update bird physics with rotation
-      game.bird.velocity += game.bird.gravity;
-      game.bird.y += game.bird.velocity * speedMultiplier;
+      game.bird.velocity += game.bird.gravity * dt;
+      game.bird.y += game.bird.velocity * speedMultiplier * dt;
       game.bird.rotation = Math.min(Math.max(game.bird.velocity * 3, -30), 30);
 
       // Update power-up timer
       if (game.powerUpTimer > 0) {
-        game.powerUpTimer--;
-        if (game.powerUpTimer === 0) {
+        game.powerUpTimer -= dt;
+        if (game.powerUpTimer <= 0) {
+          game.powerUpTimer = 0;
           game.slowMotion = false;
           game.shield = false;
         }
       }
 
       // Pipe spawning with occasional power-ups and dynamic gaps
-      game.spawnTimer--;
+      game.spawnTimer -= dt;
       if (game.spawnTimer <= 0) {
         // Calculate dynamic gap based on score
         // At score 0: gap between 160-190
@@ -349,7 +369,7 @@ export default function FlappyDonut() {
       // Update and draw pipes
       for (let i = 0; i < game.pipes.length; i++) {
         const pipe = game.pipes[i];
-        pipe.x -= game.gameSpeed;
+        pipe.x -= game.gameSpeed * dt;
 
         // Draw pipes with gradient effect
         const gradient = ctx.createLinearGradient(pipe.x, 0, pipe.x + game.pipeWidth, 0);
@@ -433,7 +453,7 @@ export default function FlappyDonut() {
         const powerUp = game.powerUps[i];
         if (!powerUp.active) continue;
 
-        powerUp.x -= game.gameSpeed;
+        powerUp.x -= game.gameSpeed * dt;
 
         // Draw power-up
         ctx.save();
@@ -500,10 +520,10 @@ export default function FlappyDonut() {
 
       // Update and draw particles
       game.particles = game.particles.filter((p) => {
-        p.x += p.vx * speedMultiplier;
-        p.y += p.vy * speedMultiplier;
-        p.vy += 0.2;
-        p.life -= 0.02;
+        p.x += p.vx * speedMultiplier * dt;
+        p.y += p.vy * speedMultiplier * dt;
+        p.vy += 0.2 * dt;
+        p.life -= 0.02 * dt;
 
         if (p.life > 0) {
           ctx.save();
