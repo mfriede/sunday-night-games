@@ -1,5 +1,8 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
+import { DonutArt } from "./ArcadeArt";
+import { drawFlappyBackground, drawFlappyPipe, drawFlappyPowerUp, flappyPalette } from "./flappyDonutArt";
+import styles from "../styles/FlappyDonut.module.css";
 
 interface Particle {
   x: number;
@@ -20,6 +23,25 @@ interface PowerUp {
 export default function FlappyDonut() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const donutArtRef = useRef<HTMLDivElement>(null);
+  const donutImageRef = useRef<HTMLImageElement | null>(null);
+  const soundContextRef = useRef<AudioContext | null>(null);
+
+  useEffect(() => {
+    const svg = donutArtRef.current?.querySelector("svg");
+    if (svg) {
+      const sprite = svg.cloneNode(true) as SVGSVGElement;
+      sprite.setAttribute("width", "220");
+      sprite.setAttribute("height", "220");
+      const image = new Image();
+      image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(new XMLSerializer().serializeToString(sprite))}`;
+      donutImageRef.current = image;
+    }
+    return () => {
+      soundContextRef.current?.close();
+      soundContextRef.current = null;
+    };
+  }, []);
 
   const [isGameOver, setIsGameOver] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
@@ -30,7 +52,8 @@ export default function FlappyDonut() {
   // Load high score from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("flappy-donut-high-score");
-    if (saved) setHighScore(parseInt(saved));
+    const score = Number(saved);
+    if (Number.isSafeInteger(score) && score >= 0) setHighScore(score);
   }, []);
 
   // Save high score
@@ -100,7 +123,7 @@ export default function FlappyDonut() {
     createParticles(
       gameStateRef.current.bird.x + 25,
       gameStateRef.current.bird.y + 25,
-      "#ff0000",
+      flappyPalette.pink,
       20
     );
   }, []);
@@ -148,17 +171,10 @@ export default function FlappyDonut() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Assets
-    const donutImg = new Image();
-    donutImg.src = "/donut.png";
-    const bgImg = new Image();
-    bgImg.src = "/bakery_background.png";
-    const pipeImg = new Image();
-    pipeImg.src = "/pipe.png";
-
     // Create oscillator-based jump sound
     const createJumpSound = () => {
-      const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const audioContext = soundContextRef.current ??= new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      if (audioContext.state === "suspended") void audioContext.resume();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
@@ -177,7 +193,8 @@ export default function FlappyDonut() {
 
     // Create oscillator-based score sound
     const createScoreSound = () => {
-      const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const audioContext = soundContextRef.current ??= new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      if (audioContext.state === "suspended") void audioContext.resume();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
@@ -197,6 +214,40 @@ export default function FlappyDonut() {
     canvas.width = 400;
     canvas.height = 600;
 
+    const fontFamily = getComputedStyle(canvas).fontFamily;
+
+    function drawDonut() {
+      if (!ctx) return;
+      const { bird, shield } = gameStateRef.current;
+      ctx.save();
+      ctx.translate(bird.x + bird.width / 2, bird.y + bird.height / 2);
+      ctx.rotate((bird.rotation * Math.PI) / 180);
+      if (shield) {
+        ctx.strokeStyle = flappyPalette.lavender;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, 30, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      const image = donutImageRef.current;
+      if (image?.complete && image.naturalWidth > 0) {
+        ctx.drawImage(image, -bird.width / 2, -bird.height / 2, bird.width, bird.height);
+      }
+      ctx.restore();
+    }
+
+    function drawFrozenScene() {
+      if (!ctx || !canvas) return;
+      const game = gameStateRef.current;
+      for (const pipe of game.pipes) {
+        drawFlappyPipe(ctx, pipe.x, pipe.topHeight, pipe.gap || game.pipeGap, game.pipeWidth, canvas.height);
+      }
+      for (const powerUp of game.powerUps) {
+        if (powerUp.active) drawFlappyPowerUp(ctx, powerUp.x, powerUp.y, powerUp.type);
+      }
+      drawDonut();
+    }
+
     function gameLoop() {
       if (!canvas || !ctx) return;
 
@@ -207,56 +258,25 @@ export default function FlappyDonut() {
         : 1 / 60;
       lastTimeRef.current = currentTime;
 
+      // Cap delta time to prevent physics glitches (e.g., after pause/tab switch)
+      // Max 3 frames worth of time to prevent tunneling through objects
+      const cappedDeltaTime = Math.min(deltaTime, 3 / 60);
+
       // Normalize to 60 FPS (multiply by 60 so values work same as before at 60fps)
-      const dt = deltaTime * 60;
+      const dt = cappedDeltaTime * 60;
 
       const game = gameStateRef.current;
 
-      // Clear canvas
-      ctx.fillStyle = "rgba(135, 206, 235, 0.2)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      drawFlappyBackground(ctx, canvas.width, canvas.height, game.frame);
 
-      if (!gameStarted) {
-        // Start screen
-        ctx.fillStyle = "#333";
-        ctx.font = "bold 32px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText("Flappy Donut", canvas.width / 2, 200);
-
-        ctx.font = "20px Arial";
-        ctx.fillText("Press Space or Click to Start", canvas.width / 2, 250);
-        ctx.fillText("Press P to Pause", canvas.width / 2, 280);
-
-        ctx.font = "16px Arial";
-        ctx.fillText("Collect power-ups for special abilities!", canvas.width / 2, 350);
-
-        // Draw donut
-        if (donutImg.complete) {
-          ctx.drawImage(donutImg, canvas.width / 2 - 25, 150, 50, 50);
-        }
-
-        animationFrameRef.current = requestAnimationFrame(gameLoop);
-        return;
-      }
-
-      if (isPaused) {
-        // Pause screen
-        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "white";
-        ctx.font = "bold 32px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
-
-        ctx.font = "20px Arial";
-        ctx.fillText("Press P to Resume", canvas.width / 2, canvas.height / 2 + 40);
-
+      if (!gameStarted || isPaused) {
+        if (gameStarted) drawFrozenScene();
         animationFrameRef.current = requestAnimationFrame(gameLoop);
         return;
       }
 
       if (isGameOver) {
+        drawFrozenScene();
         // Draw particles
         game.particles = game.particles.filter((p) => {
           p.x += p.vx * dt;
@@ -275,30 +295,6 @@ export default function FlappyDonut() {
           return false;
         });
 
-        // Game over screen
-        ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "white";
-        ctx.font = "bold 40px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText("Game Over!", canvas.width / 2, 200);
-
-        ctx.font = "24px Arial";
-        ctx.fillText(`Score: ${finalScore}`, canvas.width / 2, 250);
-
-        if (finalScore === highScore && finalScore > 0) {
-          ctx.fillStyle = "#FFD700";
-          ctx.fillText("NEW HIGH SCORE!", canvas.width / 2, 290);
-        }
-
-        ctx.fillStyle = "white";
-        ctx.font = "18px Arial";
-        ctx.fillText(`High Score: ${highScore}`, canvas.width / 2, 330);
-
-        ctx.font = "16px Arial";
-        ctx.fillText("Press Space or Click to restart", canvas.width / 2, 370);
-
         animationFrameRef.current = requestAnimationFrame(gameLoop);
         return;
       }
@@ -308,11 +304,6 @@ export default function FlappyDonut() {
       // Update game speed based on score
       const speedMultiplier = game.slowMotion ? 0.5 : 1;
       game.gameSpeed = Math.min(2 + game.score * 0.1, 5) * speedMultiplier;
-
-      // Scroll background (game.frame is already dt-normalized)
-      const bgX = -(game.frame * speedMultiplier % canvas.width);
-      ctx.drawImage(bgImg, bgX, 0, canvas.width, canvas.height);
-      ctx.drawImage(bgImg, bgX + canvas.width, 0, canvas.width, canvas.height);
 
       // Update bird physics with rotation
       game.bird.velocity += game.bird.gravity * dt;
@@ -371,40 +362,8 @@ export default function FlappyDonut() {
         const pipe = game.pipes[i];
         pipe.x -= game.gameSpeed * dt;
 
-        // Draw pipes with gradient effect
-        const gradient = ctx.createLinearGradient(pipe.x, 0, pipe.x + game.pipeWidth, 0);
-        gradient.addColorStop(0, "#2ecc71");
-        gradient.addColorStop(0.5, "#27ae60");
-        gradient.addColorStop(1, "#229954");
-
-        // Top pipe
-        ctx.fillStyle = gradient;
-        ctx.fillRect(pipe.x, 0, game.pipeWidth, pipe.topHeight);
-
-        // Pipe cap
-        ctx.fillStyle = "#27ae60";
-        ctx.fillRect(pipe.x - 5, pipe.topHeight - 30, game.pipeWidth + 10, 30);
-
-        // Use individual pipe gap or default
         const pipeGap = pipe.gap || game.pipeGap;
-
-        // Bottom pipe
-        ctx.fillStyle = gradient;
-        ctx.fillRect(
-          pipe.x,
-          pipe.topHeight + pipeGap,
-          game.pipeWidth,
-          canvas.height - pipe.topHeight - pipeGap
-        );
-
-        // Bottom pipe cap
-        ctx.fillStyle = "#27ae60";
-        ctx.fillRect(
-          pipe.x - 5,
-          pipe.topHeight + pipeGap,
-          game.pipeWidth + 10,
-          30
-        );
+        drawFlappyPipe(ctx, pipe.x, pipe.topHeight, pipeGap, game.pipeWidth, canvas.height);
 
         // Collision detection
         const birdBox = {
@@ -431,7 +390,7 @@ export default function FlappyDonut() {
         if (!pipe.passed && pipe.x + game.pipeWidth < game.bird.x) {
           game.score++;
           pipe.passed = true;
-          createParticles(game.bird.x + 25, game.bird.y + 25, "#FFD700", 15);
+          createParticles(game.bird.x + 25, game.bird.y + 25, flappyPalette.yellow, 15);
 
           // Play score sound using Web Audio API
           try {
@@ -455,25 +414,7 @@ export default function FlappyDonut() {
 
         powerUp.x -= game.gameSpeed * dt;
 
-        // Draw power-up
-        ctx.save();
-        ctx.translate(powerUp.x + 15, powerUp.y + 15);
-        ctx.rotate(game.frame * 0.05);
-
-        if (powerUp.type === "slowmo") {
-          ctx.fillStyle = "#3498db";
-          ctx.font = "20px Arial";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText("⏱", 0, 0);
-        } else {
-          ctx.fillStyle = "#9b59b6";
-          ctx.font = "20px Arial";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText("🛡", 0, 0);
-        }
-        ctx.restore();
+        drawFlappyPowerUp(ctx, powerUp.x, powerUp.y, powerUp.type);
 
         // Check collection
         const birdCenterX = game.bird.x + game.bird.width / 2;
@@ -489,10 +430,10 @@ export default function FlappyDonut() {
 
           if (powerUp.type === "slowmo") {
             game.slowMotion = true;
-            createParticles(powerUp.x + 15, powerUp.y + 15, "#3498db", 10);
+            createParticles(powerUp.x + 15, powerUp.y + 15, flappyPalette.teal, 10);
           } else {
             game.shield = true;
-            createParticles(powerUp.x + 15, powerUp.y + 15, "#9b59b6", 10);
+            createParticles(powerUp.x + 15, powerUp.y + 15, flappyPalette.lavender, 10);
           }
 
           game.powerUps.splice(i, 1);
@@ -501,22 +442,7 @@ export default function FlappyDonut() {
         }
       }
 
-      // Draw donut with rotation
-      ctx.save();
-      ctx.translate(game.bird.x + game.bird.width / 2, game.bird.y + game.bird.height / 2);
-      ctx.rotate((game.bird.rotation * Math.PI) / 180);
-
-      if (game.shield) {
-        // Draw shield
-        ctx.strokeStyle = "rgba(155, 89, 182, 0.5)";
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(0, 0, 30, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-
-      ctx.drawImage(donutImg, -game.bird.width / 2, -game.bird.height / 2, game.bird.width, game.bird.height);
-      ctx.restore();
+      drawDonut();
 
       // Update and draw particles
       game.particles = game.particles.filter((p) => {
@@ -545,24 +471,30 @@ export default function FlappyDonut() {
         return;
       }
 
-      // Draw UI
-      ctx.fillStyle = "white";
-      ctx.strokeStyle = "black";
-      ctx.lineWidth = 3;
-      ctx.font = "bold 24px Arial";
+      // Keep the score legible against the illustrated sky.
+      ctx.fillStyle = flappyPalette.paper;
+      ctx.strokeStyle = flappyPalette.ink;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(14, 14, 135, 40, 8);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = flappyPalette.ink;
+      ctx.font = `700 18px ${fontFamily}`;
       ctx.textAlign = "left";
-      ctx.strokeText(`Score: ${game.score}`, 10, 40);
-      ctx.fillText(`Score: ${game.score}`, 10, 40);
+      ctx.fillText(`Score: ${game.score}`, 26, 40);
 
-      // Draw power-up status
       if (game.powerUpTimer > 0) {
-        const powerUpText = game.slowMotion ? "SLOW MOTION" : "SHIELD";
-        const powerUpColor = game.slowMotion ? "#3498db" : "#9b59b6";
-
-        ctx.fillStyle = powerUpColor;
-        ctx.font = "bold 16px Arial";
+        const powerUpText = game.slowMotion ? "Slow motion" : "Shield";
+        ctx.fillStyle = flappyPalette.paper;
+        ctx.beginPath();
+        ctx.roundRect(165, 14, 221, 40, 8);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = game.slowMotion ? flappyPalette.teal : flappyPalette.lavender;
+        ctx.font = `700 14px ${fontFamily}`;
         ctx.textAlign = "center";
-        ctx.fillText(`${powerUpText}: ${Math.ceil(game.powerUpTimer / 60)}s`, canvas.width / 2, 30);
+        ctx.fillText(`${powerUpText}: ${Math.ceil(game.powerUpTimer / 60)}s`, 275, 39);
       }
 
       animationFrameRef.current = requestAnimationFrame(gameLoop);
@@ -575,7 +507,7 @@ export default function FlappyDonut() {
       createParticles(
         gameStateRef.current.bird.x + 10,
         gameStateRef.current.bird.y + gameStateRef.current.bird.height - 10,
-        "#87CEEB",
+        flappyPalette.paper,
         5
       );
 
@@ -589,10 +521,15 @@ export default function FlappyDonut() {
 
     // Event listeners
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLElement && e.target.closest("a, input, textarea, select")) return;
+      if (e.repeat) return;
       if (e.code === "Space") {
+        if (e.target instanceof HTMLElement && e.target.closest("button")) return;
         e.preventDefault();
         if (!gameStarted) {
           startGame();
+        } else if (isGameOver) {
+          handleRestart();
         } else {
           jump();
         }
@@ -601,9 +538,9 @@ export default function FlappyDonut() {
       }
     };
 
-    const handleClick = (e: MouseEvent) => {
-      // Left click only
-      if (e.button !== 0) return;
+    const handleClick = (e: PointerEvent) => {
+      if (!e.isPrimary || e.button !== 0) return;
+      e.preventDefault();
 
       if (!gameStarted) {
         startGame();
@@ -614,17 +551,18 @@ export default function FlappyDonut() {
       }
     };
 
+    const preventContextMenu = (e: Event) => e.preventDefault();
     window.addEventListener("keydown", handleKeyDown);
-    canvas.addEventListener("click", handleClick);
-    canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+    canvas.addEventListener("pointerdown", handleClick);
+    canvas.addEventListener("contextmenu", preventContextMenu);
 
     // Start game loop
     gameLoop();
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      canvas.removeEventListener("click", handleClick);
-      canvas.removeEventListener("contextmenu", (e) => e.preventDefault());
+      canvas.removeEventListener("pointerdown", handleClick);
+      canvas.removeEventListener("contextmenu", preventContextMenu);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -632,37 +570,71 @@ export default function FlappyDonut() {
   }, [gameStarted, isGameOver, isPaused, handleGameOver, startGame, togglePause, finalScore, highScore, handleRestart]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 p-4">
-      <div className="relative">
-        <canvas
-          ref={canvasRef}
-          className="border-4 border-gray-700 rounded-lg shadow-2xl"
-        />
-
+    <div className={styles.game}>
+      <div ref={donutArtRef} className={styles.sprite} aria-hidden="true">
+        <DonutArt />
+      </div>
+      <div className={styles.toolbar}>
+        <p className={styles.best}>Personal best <strong>{highScore}</strong></p>
         {gameStarted && !isGameOver && (
-          <button
-            onClick={togglePause}
-            className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded hover:bg-opacity-70 transition-all"
-          >
-            {isPaused ? "Resume (P)" : "Pause (P)"}
+          <button onClick={togglePause} className={styles.pauseButton} aria-label={isPaused ? "Resume game" : "Pause game"}>
+            {isPaused ? "Resume" : "Pause"} <span aria-hidden="true"> / P</span>
           </button>
         )}
       </div>
-
-      <div className="mt-4 text-white text-center">
-        <p className="text-lg font-semibold">High Score: {highScore}</p>
-        <p className="text-sm text-gray-400 mt-2">
-          Use SPACE or Click to jump • P to pause
-        </p>
+      <div className={styles.stage}>
+        <canvas
+          ref={canvasRef}
+          width={400}
+          height={600}
+          className={styles.canvas}
+          aria-label="Flappy Donut play area. Tap, click, or press Space to flap. Press P to pause."
+        >
+          Flappy Donut requires a browser that supports canvas.
+        </canvas>
+        {(!gameStarted || isPaused || isGameOver) && (
+          <div className={styles.overlay}>
+            <div className={styles.panel} data-state={isGameOver ? "over" : isPaused ? "paused" : "ready"} aria-live="polite">
+              <DonutArt className={styles.mascot} />
+              <p className={styles.eyebrow}>Sunday Night Games / Arcade</p>
+              <h2>{isGameOver ? "One more try?" : isPaused ? "Taking a breather." : "Stay sweet. Stay airborne."}</h2>
+              {isGameOver ? (
+                <>
+                  <p className={styles.score} aria-label={`Final score: ${finalScore}`}>{finalScore}</p>
+                  {finalScore === highScore && finalScore > 0 && <p className={styles.record}>New personal best!</p>}
+                  <p className={styles.copy}>Pipes cleared. Ready for another round?</p>
+                </>
+              ) : (
+                <p className={styles.copy}>
+                  {isPaused ? "Your donut will be right here." : "Tap to flap. Find the gaps. Keep flying."}
+                </p>
+              )}
+              <button className={styles.playButton} onClick={isGameOver ? handleRestart : isPaused ? togglePause : startGame}>
+                {isGameOver ? "Play again" : isPaused ? "Keep flying" : "Let's play"}
+              </button>
+              <p className={styles.hint}>{isPaused ? "or press P to resume" : "or press Space"}</p>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Hidden audio elements */}
-      <audio
-        ref={audioRef}
-        src="/8_Bit_Adventure.mp3"
-        loop
-        style={{ display: "none" }}
-      />
+      <div className={styles.controls}>
+        <p>Tap or click to flap / <kbd>Space</kbd> flap / <kbd>P</kbd> pause</p>
+        <div className={styles.powerUps}>
+          <span>
+            <svg viewBox="0 0 32 32" fill="#f9dd93" stroke="#252623" strokeWidth="2" aria-hidden="true">
+              <circle cx="16" cy="16" r="14" /><circle cx="16" cy="16" r="8" fill="none" /><path d="M16 11v5l4 2" fill="none" />
+            </svg>
+            Clock = slow motion
+          </span>
+          <span>
+            <svg viewBox="0 0 32 32" fill="#d9cfed" stroke="#252623" strokeWidth="2" aria-hidden="true">
+              <circle cx="16" cy="16" r="14" /><path d="m16 7 8 4-2 9q-3 4-6 6-3-2-6-6l-2-9z" fill="none" />
+            </svg>
+            Shield = protection
+          </span>
+        </div>
+      </div>
+      <audio ref={audioRef} src="/8_Bit_Adventure.mp3" loop style={{ display: "none" }} />
     </div>
   );
 }
