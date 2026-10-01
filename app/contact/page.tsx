@@ -1,24 +1,35 @@
-'use client';
-
-import Navbar from '../components/Navbar';
-import ContactSection from '../components/ContactSection';
+import Link from "next/link";
+import Navbar from "../components/Navbar";
+import ContactSection from "../components/ContactSection";
+import { ArrowIcon, DonutArt } from "../components/ArcadeArt";
+import styles from "../styles/InnerPages.module.css";
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className={styles.page}>
       <Navbar />
-      <div className="container mx-auto px-6 py-12">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-8">Contact Us</h1>
-          <p className="text-center text-gray-300 mb-12">
-            Have questions, feedback, or just want to say hello? We&apos;d love to hear from you! 
-            Fill out the form below and we&apos;ll get back to you as soon as possible.
-          </p>
-          <div className="bg-gray-800 p-8 rounded-lg">
+      <main className={styles.contactMain}>
+        <Link href="/" className={styles.backLink}>
+          <ArrowIcon /> Back to the studio
+        </Link>
+        <div className={styles.contactGrid}>
+          <div className={styles.contactCopy}>
+            <p className={styles.eyebrow}>Our inbox is open</p>
+            <h1>
+              Hey there,
+              <br /> <span>player.</span>
+            </h1>
+            <p>
+              A game idea, a pesky bug, or just a hello. We&apos;d love to hear
+              what&apos;s on your mind.
+            </p>
+            <DonutArt />
+          </div>
+          <div className={styles.contactForm}>
             <ContactSection />
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
-} 
+}

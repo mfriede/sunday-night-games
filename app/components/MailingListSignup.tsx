@@ -1,95 +1,114 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { sanitizeEmail, isValidEmail } from '../utils/validation';
+import { useState } from "react";
+import { sanitizeEmail, isValidEmail } from "../utils/validation";
+import { ArrowIcon, SparkIcon } from "./ArcadeArt";
+import styles from "../styles/Home.module.css";
 
 export default function MailingListSignup() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{
-    type: 'success' | 'error' | '';
+    type: "success" | "error" | "";
     message: string;
-  }>({ type: '', message: '' });
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    // Sanitize and validate email
+  }>({ type: "", message: "" });
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (submitting) return;
     const sanitizedEmail = sanitizeEmail(email);
-    
     if (!isValidEmail(sanitizedEmail)) {
       setStatus({
-        type: 'error',
-        message: 'Please enter a valid email address.'
+        type: "error",
+        message: "Please enter a valid email address.",
       });
       return;
     }
-
+    setSubmitting(true);
+    setStatus({ type: "", message: "" });
     try {
-      const response = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: sanitizedEmail }),
       });
-
       const data = await response.json();
-
       if (response.ok) {
         setStatus({
-          type: 'success',
-          message: data.message || 'Thanks for subscribing! We&apos;ll keep you updated.'
+          type: "success",
+          message: data.message || "You're on the list. See you next Sunday!",
         });
-        setEmail('');
-      } else {
+        setEmail("");
+      } else
         setStatus({
-          type: 'error',
-          message: data.error || 'Failed to subscribe. Please try again.'
+          type: "error",
+          message:
+            data.error || "We couldn't add you just yet. Please try again.",
         });
-      }
-    } catch (error) {
+    } catch {
       setStatus({
-        type: 'error',
-        message: 'An error occurred. Please try again later.'
+        type: "error",
+        message: "We couldn't connect. Please try again in a moment.",
       });
+    } finally {
+      setSubmitting(false);
     }
   };
-
   return (
-    <section className="bg-gray-800 py-16 px-6 mt-16">
-      <div className="max-w-xl mx-auto text-center">
-        <h2 className="text-2xl font-bold mb-8">Stay Updated</h2>
-        <p className="text-gray-300 mb-8">
-          Sign up for our mailing list to receive updates about new games and features.
+    <section
+      id="newsletter"
+      className={styles.newsletter}
+      aria-labelledby="newsletter-title"
+    >
+      <div>
+        <p className={styles.eyebrow}>A little something to look forward to</p>
+        <h2 id="newsletter-title">
+          Keep your
+          <br />
+          Sunday nights <span>open.</span>
+          <SparkIcon />
+        </h2>
+        <p>
+          New games, little updates, and the occasional donut.
+          <br />
+          Get the good stuff straight from our studio.
         </p>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+      </div>
+      <div className={styles.signup}>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="signup-email">Your email address</label>
+          <div className={styles.emailField}>
             <input
+              id="signup-email"
               type="email"
               name="email"
-              placeholder="Enter your email address"
+              autoComplete="email"
+              placeholder="you@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(event) => setEmail(event.target.value)}
               required
-              className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={submitting}
+              aria-describedby="signup-privacy signup-status"
             />
+            <button type="submit" disabled={submitting}>
+              {submitting ? "Joining…" : "Count me in"}
+              <ArrowIcon />
+            </button>
           </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
-          >
-            Subscribe
-          </button>
-          <p className="text-sm text-gray-400 mt-4">
-            We respect your privacy. We won&apos;t spam you or sell your email address.
+          <p id="signup-privacy" className={styles.privacy}>
+            Just studio news. We won&apos;t sell your email.
           </p>
-        </form>
-        {status.message && (
-          <p className={`mt-4 ${
-            status.type === 'success' ? 'text-green-400' : 'text-red-400'
-          }`}>
+          <p
+            id="signup-status"
+            role="status"
+            aria-live="polite"
+            className={
+              status.type === "error" ? styles.formError : styles.formSuccess
+            }
+          >
             {status.message}
           </p>
-        )}
+        </form>
       </div>
     </section>
   );
-} 
+}

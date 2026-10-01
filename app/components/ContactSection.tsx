@@ -50,7 +50,11 @@ export default function ContactSection() {
   return (
     <form className="max-w-xl mx-auto" onSubmit={handleSubmit}>
       <div className="mb-4">
+        <label htmlFor="contact-email">Your email address</label>
         <input
+          id="contact-email"
+          name="email"
+          autoComplete="email"
           type="email"
           placeholder="Enter your email"
           className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-600"
@@ -61,7 +65,10 @@ export default function ContactSection() {
         />
       </div>
       <div className="mb-4">
+        <label htmlFor="contact-message">What&apos;s on your mind?</label>
         <textarea
+          id="contact-message"
+          name="message"
           placeholder="Your message"
           rows={4}
           className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-600"
@@ -81,7 +88,7 @@ export default function ContactSection() {
         {isSubmitting ? 'Sending...' : 'Send Message'}
       </button>
       {status.message && (
-        <p className={`text-center mt-4 ${
+        <p role="status" aria-live="polite" className={`text-center mt-4 ${
           status.type === 'success' ? 'text-green-400' : 'text-red-400'
         }`}>
           {status.message}
@@ -89,4 +96,4 @@ export default function ContactSection() {
       )}
     </form>
   );
-} 
+}

@@ -1,84 +1,216 @@
-'use client';
-
-import Link from 'next/link';
-import Image from 'next/image';
+import Link from "next/link";
 import Navbar from "./components/Navbar";
 import MailingListSignup from "./components/MailingListSignup";
+import ArcadeHero from "./components/ArcadeHero";
+import { MotionProvider } from "./components/MotionProvider";
+import { ArrowIcon, DonutArt, SparkIcon } from "./components/ArcadeArt";
+import styles from "./styles/Home.module.css";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <MotionProvider>
+      <a className={styles.skipLink} href="#main">
+        Skip to content
+      </a>
       <Navbar />
-
-      <main className="container mx-auto px-6 py-12">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-4xl font-bold mb-8">Welcome to Sunday Night Games</h1>
-          <p className="text-lg text-gray-300 mb-12">
-            At Sunday Night Games, we believe great games are born from passion, 
-            creativity, and a spark of imagination shared among friends. Founded by 
-            three lifelong gamers and dreamers, our mission is simple: to craft fun, 
-            immersive, and memorable experiences for players everywhere.
-          </p>
-          <Link 
-            href="/donut-survivor" 
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-          >
-            Play Donut Survivor
-          </Link>
-        </div>
-      </main>
-
-      {/* Features Section */}
-      <section id="features" className="bg-gray-800 py-16 px-6">
-        <div className="container mx-auto max-w-7xl">
-          <h2 className="text-3xl font-bold text-center mb-12">Games</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-gray-700 p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-4">Donut Survivor</h3>
-              <Image
-                src="/images/donut_surivor_1.jpg"
-                alt="Donut Survivor"
-                width={400}
-                height={200}
-                className="w-full h-48 object-cover rounded-lg mb-4"
-              />
-              <p className="text-gray-300">A fast-paced, arcade-style roguelike where players control a brave donut fighting off relentless waves of enemies. Survive as long as possible by collecting dessert-themed upgrades and abilities, turning yourself into an unstoppable sugary force!</p>
+      <main id="main">
+        <section className={styles.hero} aria-labelledby="hero-title">
+          <div className={styles.heroCopy}>
+            <p className={styles.eyebrow}>
+              <span className={styles.liveDot} /> Independent games. Made by
+              friends.
+            </p>
+            <h1 id="hero-title">
+              One more
+              <br /> game.
+              <br /> <span>Then bed.</span>
+              <SparkIcon className={styles.titleSpark} />
+            </h1>
+            <p className={styles.heroDescription}>
+              A little chaos. A lot of fun. We make games for the nights you
+              wish would last a little longer.
+            </p>
+            <div className={styles.heroActions}>
+              <Link href="#games" className={styles.primaryButton}>
+                Find your next game <ArrowIcon />
+              </Link>
+              <Link href="#studio" className={styles.textLink}>
+                Meet the studio <span aria-hidden="true">↗</span>
+              </Link>
             </div>
-            <div className="bg-gray-700 p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-4">Sandbox Game</h3>
-              <Image
-                src="/images/game2_image.jpg"
-                alt="Sandbox Game"
-                width={400}
-                height={200}
-                className="w-full h-48 object-cover rounded-lg mb-4"
-              />
-              <p className="text-gray-300">This game plunges players into a planet where society has fractured after the collapse of a vital wormhole connecting it to Earth. With technology reduced to relics of the past, survivors cling to life in harsh environments dominated by decaying ancient cities and hostile factions. Players must scavenge, build, and navigate the remnants of a once-thriving colony while contending with alien creatures and rival groups.</p>
-            </div>
-            <div className="bg-gray-700 p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-4">Coming Soon!</h3>
-              <Image
-                src="/images/coming_soon.jpg"
-                alt="Coming Soon"
-                width={400}
-                height={200}
-                className="w-full h-48 object-cover rounded-lg mb-4"
-              />
-              <p className="text-gray-300">Details on our next game will coming soon!</p>
-            </div>
+            <p className={styles.heroNote}>
+              <span aria-hidden="true">↳</span> Free to play. Right here in your
+              browser.
+            </p>
+          </div>
+          <ArcadeHero />
+        </section>
+        <div
+          className={styles.ribbon}
+          aria-label="Made by friends. Played by everyone. Just good games."
+        >
+          <div className={styles.ribbonInner} aria-hidden="true">
+            {[0, 1].map((copy) => (
+              <span className={styles.ribbonGroup} key={copy}>
+                Made by friends <SparkIcon /> Played by everyone <SparkIcon />{" "}
+                Just good games <SparkIcon />
+              </span>
+            ))}
           </div>
         </div>
-      </section>
-
-      {/* Mailing List Signup */}
-      <MailingListSignup />
-
-      {/* Footer */}
-      <footer className="bg-gray-800 py-8 px-6 mt-16">
-        <div className="container mx-auto text-center text-gray-300">
-          <p>&copy; 2025 Sunday Night Games. All rights reserved.</p>
+        <section
+          id="games"
+          className={styles.games}
+          aria-labelledby="games-title"
+        >
+          <div className={styles.sectionHeading}>
+            <div>
+              <p className={styles.eyebrow}>The good stuff</p>
+              <h2 id="games-title">Pick your kind of chaos.</h2>
+            </div>
+            <p>
+              Small games. Big &quot;one more try&quot; energy.
+              <br /> Your next high score is waiting.
+            </p>
+          </div>
+          <div className={styles.gameGrid}>
+            <Link href="/donut-survivor" className={styles.gameCard}>
+              <div
+                className={`${styles.gameScene} ${styles.survivorScene}`}
+                aria-hidden="true"
+              >
+                <span className={styles.playBadge}>
+                  <span /> Play now
+                </span>
+                <span className={styles.sceneSun} />
+                <span className={`${styles.cloud} ${styles.cloudOne}`} />
+                <span className={`${styles.cloud} ${styles.cloudTwo}`} />
+                <span className={`${styles.coin} ${styles.coinOne}`}>✦</span>
+                <span className={`${styles.coin} ${styles.coinTwo}`}>✦</span>
+                <span className={`${styles.coin} ${styles.coinThree}`}>✦</span>
+                <span className={styles.sceneDonut}>
+                  <DonutArt />
+                </span>
+                <span className={styles.platformOne} />
+                <span className={styles.platformTwo} />
+                <span className={styles.sceneGround} />
+                <span className={styles.sceneCaption}>
+                  Run. Jump. Sprinkle.
+                </span>
+              </div>
+              <div className={styles.gameInfo}>
+                <div className={styles.gameMeta}>
+                  <span>01 / Platformer</span>
+                  <span>Browser game</span>
+                </div>
+                <div className={styles.gameTitle}>
+                  <h3>Donut Survivor</h3>
+                  <span className={styles.cardArrow}>
+                    <ArrowIcon />
+                  </span>
+                </div>
+                <p>
+                  A donut with places to be. Jump through the bakery, dodge
+                  trouble, and scoop up every coin you can.
+                </p>
+                <span className={styles.gameCta}>
+                  Let&apos;s play <span aria-hidden="true">↗</span>
+                </span>
+              </div>
+            </Link>
+            <Link href="/flappy-donut" className={styles.gameCard}>
+              <div
+                className={`${styles.gameScene} ${styles.flappyScene}`}
+                aria-hidden="true"
+              >
+                <span className={styles.playBadge}>
+                  <span /> Play now
+                </span>
+                <span className={`${styles.cloud} ${styles.cloudOne}`} />
+                <span className={`${styles.cloud} ${styles.cloudTwo}`} />
+                <span className={styles.flappyTrail}>· · ·</span>
+                <span className={styles.flappyDonut}>
+                  <DonutArt />
+                </span>
+                <span className={`${styles.pipe} ${styles.pipeTop}`} />
+                <span className={`${styles.pipe} ${styles.pipeBottom}`} />
+                <span className={styles.flappyHills} />
+                <span className={styles.sceneCaption}>
+                  Stay sweet. Stay airborne.
+                </span>
+              </div>
+              <div className={styles.gameInfo}>
+                <div className={styles.gameMeta}>
+                  <span>02 / Arcade</span>
+                  <span>Browser game</span>
+                </div>
+                <div className={styles.gameTitle}>
+                  <h3>Flappy Donut</h3>
+                  <span className={styles.cardArrow}>
+                    <ArrowIcon />
+                  </span>
+                </div>
+                <p>
+                  One tap. One tiny gap. Keep your donut flying and see how far
+                  &quot;just one more try&quot; takes you.
+                </p>
+                <span className={styles.gameCta}>
+                  Let&apos;s play <span aria-hidden="true">↗</span>
+                </span>
+              </div>
+            </Link>
+          </div>
+        </section>
+        <section
+          id="studio"
+          className={styles.studio}
+          aria-labelledby="studio-title"
+        >
+          <div className={styles.studioSticker} aria-hidden="true">
+            <SparkIcon />
+            <span>
+              Good friends.
+              <br />
+              Good games.
+            </span>
+            <DonutArt />
+          </div>
+          <div className={styles.studioCopy}>
+            <p className={styles.eyebrow}>Hey, we&apos;re Sunday Night Games</p>
+            <h2 id="studio-title">
+              Built on friendship.
+              <br /> Fueled by <span>&quot;what if?&quot;</span>
+            </h2>
+            <p>
+              We&apos;re three lifelong gamers turning our Sunday night ideas
+              into games you can actually play. A tiny studio with a soft spot
+              for strange ideas, silly characters, and a really good game night.
+            </p>
+            <Link href="/contact" className={styles.textLink}>
+              Say hello <span aria-hidden="true">↗</span>
+            </Link>
+          </div>
+        </section>
+        <MailingListSignup />
+      </main>
+      <footer className={styles.footer}>
+        <Link href="/" className={styles.footerBrand}>
+          Sunday Night Games<span>See you next Sunday.</span>
+        </Link>
+        <div>
+          <Link href="#games">Our games</Link>
+          <Link href="/contact">Contact</Link>
+          <a
+            href="https://buymeacoffee.com/sundaynightgames"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.coffeeLink}
+          >
+            Buy us a coffee <span aria-hidden="true">↗</span>
+          </a>
+          <p>© {new Date().getFullYear()} Sunday Night Games</p>
         </div>
       </footer>
-    </div>
+    </MotionProvider>
   );
 }

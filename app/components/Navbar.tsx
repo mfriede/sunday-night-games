@@ -1,30 +1,83 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useRef, useState } from "react";
+import { ArrowIcon, DonutArt } from "./ArcadeArt";
+import styles from "../styles/Navbar.module.css";
 
 export default function Navbar() {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
   return (
-    <>
-      {/* Development Banner */}
-      <div className="bg-blue-600 text-white py-3 px-6 text-center">
-        <p className="text-sm md:text-base">
-          🚧 We&apos;re still building! Please enjoy our games in the meantime. 🎮
-        </p>
-      </div>
-
-      <nav className="bg-gray-800 py-4 px-6">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <Link href="/" className="text-2xl font-bold hover:text-blue-500">
-            Sunday Night Games
+    <header className={styles.header}>
+      <nav className={styles.nav} aria-label="Main navigation">
+        <Link href="/" className={styles.brand} onClick={() => setOpen(false)}>
+          <DonutArt />
+          <span>
+            Sunday Night
+            <span>
+              Games
+              <span className={styles.brandStar} aria-hidden="true">
+                ✳
+              </span>
+            </span>
+          </span>
+        </Link>
+        <button
+          ref={menuRef}
+          className={styles.menuToggle}
+          aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={open}
+          aria-controls="main-menu"
+          onClick={() => setOpen((value) => !value)}
+        >
+          <span />
+          <span />
+        </button>
+        <div
+          id="main-menu"
+          className={`${styles.links} ${open ? styles.open : ""}`}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              setOpen(false);
+              menuRef.current?.focus();
+            }
+          }}
+        >
+          <Link href="/#games" onClick={() => setOpen(false)}>
+            Our games
           </Link>
-          <div className="space-x-6">
-            <Link href="/" className="hover:text-blue-500 transition-colors">Home</Link>
-            <Link href="/donut-survivor" className="hover:text-blue-500 transition-colors">Donut Survivor</Link>
-            <Link href="/flappy-donut" className="hover:text-blue-500 transition-colors">Flappy Donut</Link>
-            <Link href="/contact" className="hover:text-blue-500 transition-colors">Contact</Link>
-          </div>
+          <Link href="/#studio" onClick={() => setOpen(false)}>
+            The studio
+          </Link>
+          {pathname !== "/" && (
+            <Link
+              href="/flappy-donut"
+              aria-current={pathname === "/flappy-donut" ? "page" : undefined}
+              onClick={() => setOpen(false)}
+            >
+              Flappy Donut
+            </Link>
+          )}
+          <Link
+            href="/contact"
+            aria-current={pathname === "/contact" ? "page" : undefined}
+            onClick={() => setOpen(false)}
+          >
+            Say hello
+          </Link>
+          <Link
+            href="/donut-survivor"
+            className={styles.playLink}
+            aria-current={pathname === "/donut-survivor" ? "page" : undefined}
+            onClick={() => setOpen(false)}
+          >
+            Let&apos;s play <ArrowIcon />
+          </Link>
         </div>
       </nav>
-    </>
+    </header>
   );
-} 
+}
