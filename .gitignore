@@ -12,6 +12,9 @@
 
 # testing
 /coverage
+/output/playwright/
+/.playwright-cli/
+/public/animations/rive.wasm
 
 # next.js
 /.next/

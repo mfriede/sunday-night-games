@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sunday Night Games - Play Together, Stay Connected",
-  description: "A unique multiplayer gaming experience for families and friends.",
+  title: "Sunday Night Games | One more game. Then bed.",
+  description: "Independent games made by friends. Play Donut Survivor and Flappy Donut free in your browser, and see what Sunday Night Games is making next.",
 };
 
 export default function RootLayout({

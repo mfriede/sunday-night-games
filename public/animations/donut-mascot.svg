@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440" fill="none">
+  <defs>
+    <linearGradient id="g1" gradientUnits="userSpaceOnUse" x1="-90" y1="-100" x2="100" y2="90">
+      <stop stop-color="#FFE2A1" offset="0" />
+      <stop stop-color="#E6A14E" offset="1" />
+    </linearGradient>
+    <linearGradient id="g2" gradientUnits="userSpaceOnUse" x1="-70" y1="-90" x2="75" y2="95">
+      <stop stop-color="#FFB3D8" offset="0" />
+      <stop stop-color="#F477AD" offset="1" />
+    </linearGradient>
+  </defs>
+  <g transform="translate(220 353) rotate(0.0) scale(1 1)">
+    <path fill="#292323" fill-opacity="0.1450980392156863" fill-rule="evenodd" d="M -76.0 0 a 76.0 10.0 0 1 0 152.0 0 a 76.0 10.0 0 1 0 -152.0 0 Z" />
+  </g>
+  <g transform="translate(220 196) rotate(0.0) scale(1 1)">
+    <g transform="translate(45 101) rotate(0.0) scale(1 1)">
+      <g transform="translate(0 0) rotate(0.0) scale(1 1)">
+        <path stroke="#292323" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" d="M 0.0 0.0 L 0.0 27.0" />
+      </g>
+      <g transform="translate(4 33) rotate(6.875493541569878) scale(1 1)">
+        <rect fill="#FFF9EF" fill-opacity="1.0" fill-rule="evenodd" stroke="#292323" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" x="-25.5" y="-14.5" width="51.0" height="29.0" rx="13" />
+      </g>
+      <g transform="translate(5 47) rotate(0.0) scale(1 1)">
+        <rect fill="#F457A2" fill-opacity="1.0" fill-rule="evenodd" stroke="#292323" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" x="-26.5" y="-6.0" width="53.0" height="12.0" rx="6" />
+      </g>
+      <g transform="translate(0 0) rotate(0.0) scale(1 1)">
+        <path stroke="#292323" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M 0.0 24.0 L 12.0 28.0" />
+      </g>
+      <g transform="translate(0 0) rotate(0.0) scale(1 1)">
+        <path stroke="#292323" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M 1.0 31.0 L 13.0 35.0" />
+      </g>
+    </g>
+    <g transform="translate(99 13) rotate(0.0) scale(1 1)">
+      <g transform="translate(0 0) rotate(0.0) scale(1 1)">
+        <path stroke="#292323" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" d="M 0.0 0.0 L 22.0 7.0 L 42.0 -14.0" />
+      </g>
+      <g transform="translate(42 -21) rotate(0.0) scale(1 1)">
+        <path fill="#FFF9EF" fill-opacity="1.0" fill-rule="evenodd" stroke="#292323" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M -13.0 0 a 13.0 13.0 0 1 0 26.0 0 a 13.0 13.0 0 1 0 -26.0 0 Z" />
+      </g>
+    </g>
+    <g transform="translate(-45 101) rotate(0.0) scale(1 1)">
+      <g transform="translate(0 0) rotate(0.0) scale(1 1)">
+        <path stroke="#292323" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" d="M 0.0 0.0 L 0.0 27.0" />
+      </g>
+      <g transform="translate(-4 33) rotate(-6.875493541569878) scale(1 1)">
+        <rect fill="#FFF9EF" fill-opacity="1.0" fill-rule="evenodd" stroke="#292323" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" x="-25.5" y="-14.5" width="51.0" height="29.0" rx="13" />
+      </g>
+      <g transform="translate(-5 47) rotate(0.0) scale(1 1)">
+        <rect fill="#F457A2" fill-opacity="1.0" fill-rule="evenodd" stroke="#292323" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" x="-26.5" y="-6.0" width="53.0" height="12.0" rx="6" />
+      </g>
+      <g transform="translate(0 0) rotate(0.0) scale(1 1)">
+        <path stroke="#292323" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M 0.0 24.0 L -12.0 28.0" />
+      </g>
+      <g transform="translate(0 0) rotate(0.0) scale(1 1)">
+        <path stroke="#292323" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M -1.0 31.0 L -13.0 35.0" />
+      </g>
+    </g>
+    <g transform="translate(-99 13) rotate(0.0) scale(1 1)">
+      <g transform="translate(0 0) rotate(0.0) scale(1 1)">
+        <path stroke="#292323" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" d="M 0.0 0.0 L -22.0 7.0 L -42.0 -14.0" />
+      </g>
+      <g transform="translate(-42 -21) rotate(0.0) scale(1 1)">
+        <path fill="#FFF9EF" fill-opacity="1.0" fill-rule="evenodd" stroke="#292323" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M -13.0 0 a 13.0 13.0 0 1 0 26.0 0 a 13.0 13.0 0 1 0 -26.0 0 Z" />
+      </g>
+    </g>
+    <g transform="translate(0 0) rotate(0.0) scale(1 1)">
+      <path fill="url(#g1)" fill-rule="evenodd" stroke="#292323" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M -112.0 0 a 112.0 112.0 0 1 0 224.0 0 a 112.0 112.0 0 1 0 -224.0 0 Z M -32.0 0 a 32.0 32.0 0 1 0 64.0 0 a 32.0 32.0 0 1 0 -64.0 0 Z" />
+    </g>
+    <g transform="translate(0 0) rotate(0.0) scale(1 1)">
+      <path fill="url(#g2)" fill-rule="evenodd" stroke="#292323" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M 105.0 0.0 C 105.00000294115407 8.999999999999519 96.02437388705142 16.41166822821521 93.695 25.105 C 91.36562611294856 33.79833177178479 95.432999201924 44.70577090517071 90.933 52.5 C 86.43300079807601 60.29422909482929 74.95295791111317 62.22503584975686 68.589 68.589 C 62.225042088886816 74.95296415024315 60.29422918309817 86.43300095096222 52.5 90.933 C 44.70577081690183 95.43299904903779 33.79833181747618 91.36562628347096 25.105 93.695 C 16.41166818252382 96.02437371652903 8.99999999999946 105.00000311769186 0.0 105.0 C -8.99999999999946 104.99999688230814 -16.411667466988174 96.02437104611484 -25.105 93.695 C -33.79833253301183 91.36562895388515 -44.70576943459436 95.43299665480947 -52.5 90.933 C -60.29423056540564 86.43300334519054 -62.225040134007244 74.95296219536489 -68.589 68.589 C -74.95295986599275 62.225037804635114 -86.43299840384815 60.29422771252103 -90.933 52.5 C -95.43300159615187 44.70577228747897 -91.36563213586683 33.79833338562049 -93.695 25.105 C -96.02436786413315 16.411666614379513 -105.0000001765378 8.999999999999998 -105.0 0.0 C -104.9999998234622 -8.999999999999998 -96.024368205178 -16.411666705762066 -93.695 -25.105 C -91.36563179482198 -33.798333294237935 -95.43300190192424 -44.70577246401683 -90.933 -52.5 C -86.43299809807577 -60.29422753598317 -74.95296011565493 -62.22503805429721 -68.589 -68.589 C -62.225039884345065 -74.95296194570278 -60.294230741943295 -86.43300365096304 -52.5 -90.933 C -44.705769258056705 -95.43299634903697 -33.79833262439449 -91.36562929492997 -25.105 -93.695 C -16.41166737560551 -96.02437070507001 -8.999999999999575 -104.99999723538372 -0.0 -105.0 C 8.999999999999575 -105.00000276461628 16.4116682739066 -96.02437405757382 25.105 -93.695 C 33.7983317260934 -91.36562594242616 44.7057709934396 -95.43299935481024 52.5 -90.933 C 60.2942290065604 -86.43300064518978 62.22503597458787 -74.9529580359443 68.589 -68.589 C 74.95296402541213 -62.225041964055684 86.43300110384845 -60.294229271367044 90.933 -52.5 C 95.43299889615156 -44.705770728632956 91.36562645399337 -33.79833186316757 93.695 -25.105 C 96.02437354600661 -16.411668136832432 104.99999705884593 -8.999999999999519 105.0 0.0 Z M -34.5 0 a 34.5 34.5 0 1 0 69.0 0 a 34.5 34.5 0 1 0 -69.0 0 Z" />
+    </g>
+    <g transform="translate(10 90) rotate(11.459155902616464) scale(1 1)">
+      <path stroke="#FFF9EF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M -5.0 0.0 L 5.0 0.0" />
+    </g>
+    <g transform="translate(-84 -8) rotate(-22.91831180523293) scale(1 1)">
+      <path stroke="#66DAE7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M -5.0 0.0 L 5.0 0.0" />
+    </g>
+    <g transform="translate(-83 33) rotate(34.37746770784939) scale(1 1)">
+      <path stroke="#FFF9EF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M -5.0 0.0 L 5.0 0.0" />
+    </g>
+    <g transform="translate(-38 82) rotate(-34.37746770784939) scale(1 1)">
+      <path stroke="#7D57C3" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M -5.0 0.0 L 5.0 0.0" />
+    </g>
+    <g transform="translate(36 85) rotate(22.91831180523293) scale(1 1)">
+      <path stroke="#FFF1A8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M -5.0 0.0 L 5.0 0.0" />
+    </g>
+    <g transform="translate(73 50) rotate(-28.64788975654116) scale(1 1)">
+      <path stroke="#66DAE7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M -5.0 0.0 L 5.0 0.0" />
+    </g>
+    <g transform="translate(85 -15) rotate(40.10704565915762) scale(1 1)">
+      <path stroke="#FFF9EF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M -5.0 0.0 L 5.0 0.0" />
+    </g>
+    <g transform="translate(63 -70) rotate(-34.37746770784939) scale(1 1)">
+      <path stroke="#7D57C3" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M -5.0 0.0 L 5.0 0.0" />
+    </g>
+    <g transform="translate(-7 -87) rotate(-22.91831180523293) scale(1 1)">
+      <path stroke="#66DAE7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M -5.0 0.0 L 5.0 0.0" />
+    </g>
+    <g transform="translate(-70 -63) rotate(28.64788975654116) scale(1 1)">
+      <path stroke="#FFF1A8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M -5.0 0.0 L 5.0 0.0" />
+    </g>
+    <g transform="translate(0 67) rotate(0.0) scale(1 1)">
+      <path fill="#EF8FB8" fill-opacity="1.0" fill-rule="evenodd" d="M -8.0 0 a 8.0 3.5 0 1 0 16.0 0 a 8.0 3.5 0 1 0 -16.0 0 Z" />
+    </g>
+    <g transform="translate(0 55) rotate(0.0) scale(1 1)">
+      <path fill="#292323" fill-opacity="1.0" fill-rule="evenodd" stroke="#292323" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M -17.0 0.0 L 17.0 0.0 C 17.0 0.0 10.0 18.0 0.0 18.0 C -10.0 18.0 -17.0 0.0 -17.0 0.0 Z" />
+    </g>
+    <g transform="translate(59 -30) rotate(0.0) scale(1 1)">
+      <path fill="#F457A2" fill-opacity="1.0" fill-rule="evenodd" d="M -10.0 0 a 10.0 5.5 0 1 0 20.0 0 a 10.0 5.5 0 1 0 -20.0 0 Z" />
+    </g>
+    <g transform="translate(-59 -30) rotate(0.0) scale(1 1)">
+      <path fill="#F457A2" fill-opacity="1.0" fill-rule="evenodd" d="M -10.0 0 a 10.0 5.5 0 1 0 20.0 0 a 10.0 5.5 0 1 0 -20.0 0 Z" />
+    </g>
+    <g transform="translate(0 -54) rotate(0.0) scale(1 1)">
+      <g transform="translate(25 0) rotate(0.0) scale(1 1)">
+        <path fill="#292323" fill-opacity="1.0" fill-rule="evenodd" d="M -6.5 0 a 6.5 11.0 0 1 0 13.0 0 a 6.5 11.0 0 1 0 -13.0 0 Z" />
+      </g>
+      <g transform="translate(23 -4) rotate(0.0) scale(1 1)">
+        <path fill="#FFF9EF" fill-opacity="1.0" fill-rule="evenodd" d="M -2.0 0 a 2.0 2.0 0 1 0 4.0 0 a 2.0 2.0 0 1 0 -4.0 0 Z" />
+      </g>
+      <g transform="translate(-25 0) rotate(0.0) scale(1 1)">
+        <path fill="#292323" fill-opacity="1.0" fill-rule="evenodd" d="M -6.5 0 a 6.5 11.0 0 1 0 13.0 0 a 6.5 11.0 0 1 0 -13.0 0 Z" />
+      </g>
+      <g transform="translate(-27 -4) rotate(0.0) scale(1 1)">
+        <path fill="#FFF9EF" fill-opacity="1.0" fill-rule="evenodd" d="M -2.0 0 a 2.0 2.0 0 1 0 4.0 0 a 2.0 2.0 0 1 0 -4.0 0 Z" />
+      </g>
+    </g>
+  </g>
+</svg>

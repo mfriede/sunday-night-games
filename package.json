@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "npm run prepare:rive && next dev --turbopack",
+    "build": "npm run prepare:rive && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "prepare:rive": "node scripts/prepare-rive.mjs",
+    "postinstall": "npm run prepare:rive"
   },
   "dependencies": {
+    "@rive-app/react-canvas": "4.36.0",
     "@sendgrid/mail": "^8.1.4",
     "mongodb": "^6.13.1",
     "next": "15.5.9",

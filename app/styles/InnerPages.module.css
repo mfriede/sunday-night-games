@@ -1,0 +1,211 @@
+.page {
+  background: #f8f5ed;
+  color: #252623;
+  min-height: 100vh;
+}
+.page a:focus-visible,
+.page input:focus-visible,
+.page textarea:focus-visible,
+.page button:focus-visible {
+  outline: 3px solid #a42864;
+  outline-offset: 4px;
+}
+.gameMain {
+  max-width: 1280px;
+  margin: auto;
+  padding: 35px 48px 30px;
+}
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  font-weight: 650;
+}
+.backLink svg {
+  width: 17px;
+  transform: rotate(180deg);
+}
+.backLink:hover {
+  color: #a42864;
+}
+.eyebrow {
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 1.3px;
+  font-weight: 700;
+}
+.gameHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 25px;
+  margin: 35px 0 25px;
+}
+.gameHeading h1 {
+  font-size: clamp(35px, 4vw, 52px);
+  font-weight: 850;
+  letter-spacing: -2px;
+  line-height: 1.1;
+  margin-top: 10px;
+}
+.gameHeading > p {
+  color: #62635b;
+  font-size: 13px;
+  line-height: 1.7;
+  max-width: 300px;
+}
+.gameFrame {
+  background: #111827;
+  border: 1.5px solid #252623;
+  border-radius: 12px;
+  overflow: auto;
+  box-shadow: 6px 6px 0 #e1dccf;
+}
+.gameFrame > div {
+  min-height: 0;
+  padding: 32px 20px;
+}
+.gameFrame > div > div {
+  max-width: 100%;
+}
+.gameFrame canvas {
+  max-width: 100%;
+  height: auto;
+}
+.attribution {
+  color: #64655c;
+  font-size: 10px;
+  text-align: center;
+  margin: 25px 0 5px;
+}
+.attribution a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.contactMain {
+  max-width: 1120px;
+  margin: auto;
+  padding: 45px 48px 80px;
+}
+.contactGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 90px;
+  align-items: start;
+  margin-top: 60px;
+}
+.contactCopy {
+  position: relative;
+}
+.contactCopy h1 {
+  font-size: clamp(55px, 6vw, 78px);
+  font-weight: 850;
+  letter-spacing: -4px;
+  line-height: 1.02;
+  margin: 20px 0 25px;
+}
+.contactCopy h1 span {
+  color: #b92c6c;
+}
+.contactCopy > p:last-of-type {
+  color: #64655c;
+  font-size: 15px;
+  line-height: 1.8;
+  max-width: 340px;
+}
+.contactCopy > svg {
+  width: 110px;
+  margin: 35px 0 0 20px;
+  transform: rotate(-15deg);
+}
+.contactForm {
+  background: #f9dd93;
+  padding: 32px;
+  border: 1.5px solid #252623;
+  border-radius: 12px;
+  box-shadow: 6px 6px 0 #252623;
+}
+.contactForm label {
+  display: block;
+  font-size: 12px;
+  font-weight: 650;
+  margin-bottom: 9px;
+}
+.contactForm input,
+.contactForm textarea {
+  background: #fffdf8;
+  color: #252623;
+  border: 1px solid #25262370;
+  border-radius: 6px;
+  padding: 13px;
+  font-size: 14px;
+}
+.contactForm button {
+  background: #252623;
+  color: #f8f5ed;
+  border-radius: 6px;
+  font-size: 13px;
+  padding: 15px;
+}
+.contactForm button:hover {
+  background: #963054;
+}
+.contactForm :global(.text-green-400) {
+  color: #28572b;
+}
+.contactForm :global(.text-red-400) {
+  color: #8e252c;
+}
+@media (max-width: 800px) {
+  .gameMain,
+  .contactMain {
+    padding: 30px 24px 45px;
+  }
+  .gameHeading {
+    align-items: start;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .gameHeading > p {
+    max-width: 450px;
+  }
+  .contactGrid {
+    gap: 35px;
+    margin-top: 40px;
+  }
+  .contactForm {
+    padding: 24px;
+  }
+  .contactCopy h1 {
+    font-size: 55px;
+    letter-spacing: -3px;
+  }
+}
+@media (max-width: 600px) {
+  .contactGrid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .contactCopy > svg {
+    width: 65px;
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    margin: 0;
+  }
+  .contactCopy h1 {
+    max-width: 270px;
+  }
+  .contactCopy > p:last-of-type {
+    font-size: 14px;
+  }
+  .gameHeading h1 {
+    font-size: 36px;
+    letter-spacing: -1.5px;
+  }
+  .contactMain,
+  .gameMain {
+    padding: 25px 22px 45px;
+  }
+}
