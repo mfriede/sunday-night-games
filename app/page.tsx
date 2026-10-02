@@ -167,13 +167,27 @@ export default function Home() {
           aria-labelledby="studio-title"
         >
           <div className={styles.studioSticker} aria-hidden="true">
-            <SparkIcon />
+            <svg className={styles.studioBubble} viewBox="0 0 280 230" fill="none">
+              <path
+                d="M34 8H236Q264 8 264 36V150Q264 178 236 178H82L40 214L46 178H34Q8 178 8 150V36Q8 8 34 8Z"
+                fill="currentColor"
+                transform="translate(7 7)"
+              />
+              <path
+                d="M34 8H236Q264 8 264 36V150Q264 178 236 178H82L40 214L46 178H34Q8 178 8 150V36Q8 8 34 8Z"
+                fill="#c6d5f6"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <SparkIcon className={styles.studioSpark} />
             <span>
               Good friends.
               <br />
               Good games.
             </span>
-            <DonutArt />
+            <DonutArt className={styles.studioDonut} />
           </div>
           <div className={styles.studioCopy}>
             <p className={styles.eyebrow}>Hey, we&apos;re Sunday Night Games</p>
